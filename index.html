@@ -388,6 +388,27 @@ table.tcgrid td.status-delayed::after{
 .sp-opt.active{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.1);font-weight:600;}
 .sp-dot{width:9px;height:9px;border-radius:50%;flex:none;}
 
+.schedule-popover{min-width:230px;}
+.sched-label{display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--chrome-text-dim);margin-bottom:6px;}
+.sched-date-input{
+  width:100%;background:rgba(255,255,255,.06);border:1px solid var(--navy-line);border-radius:6px;
+  color:#fff;font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;margin-bottom:6px;
+  color-scheme:dark;
+}
+.sched-hint{font-size:10.5px;color:var(--chrome-text-dim);line-height:1.5;margin-bottom:10px;}
+.sched-hint.warn{color:var(--accent-2);}
+.sched-btn-row{display:flex;flex-direction:column;gap:5px;}
+.sched-btn-row .sp-opt{justify-content:center;text-align:center;}
+.sched-apply{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
+.sched-apply:hover{background:#C6541F;}
+.sched-reset{color:var(--accent-2);}
+.sched-cancel{color:var(--chrome-text-dim);}
+
+.fl-zone{cursor:pointer;}
+.fl-zone:hover{background:rgba(227,106,46,.06);}
+.zonebar-row{cursor:pointer;border-radius:6px;transition:background .1s;}
+.zonebar-row:hover{background:rgba(227,106,46,.06);}
+
 /* ---- Dashboard -------------------------------------------------------------*/
 .kpi-grid{
   display:grid;
@@ -673,6 +694,42 @@ table.varlog .rt{color:var(--accent-ink);font-family:var(--font-mono);font-size:
 .sop-list li:last-child{margin-bottom:0;}
 .sop-list b{color:var(--ink);}
 
+.sop-steps{list-style:none;margin:0;padding:0;counter-reset:sop-step;}
+.sop-steps li{
+  position:relative;padding:0 0 14px 34px;margin:0;
+  font-size:12.5px;line-height:1.6;color:var(--ink-soft);
+  counter-increment:sop-step;
+}
+.sop-steps li:last-child{padding-bottom:0;}
+.sop-steps li::before{
+  content:counter(sop-step);position:absolute;left:0;top:-1px;
+  width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
+  font-family:var(--font-mono);font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.sop-steps li::after{
+  content:"";position:absolute;left:11px;top:22px;bottom:0px;width:1px;
+  background:var(--paper-line);
+}
+.sop-steps li:last-child::after{display:none;}
+.sop-steps b{color:var(--ink);}
+.sop-steps .kbd{
+  font-family:var(--font-mono);font-size:10.5px;background:var(--paper-line-soft);
+  padding:1px 6px;border-radius:4px;color:var(--ink);
+}
+.sop-steps.excel-flavor li::before{background:#2158C4;}
+
+.sop-subhead{
+  font-family:var(--font-display);font-size:20px;text-transform:uppercase;font-weight:700;
+  color:var(--ink);margin:26px 0 4px;padding-top:22px;border-top:2px solid var(--paper-line);
+}
+.sop-subhead-desc{font-size:12.5px;color:var(--ink-soft);margin:0 0 16px;max-width:760px;line-height:1.6;}
+.sop-cascade{
+  background:#FFF7EF;border:1px solid #C99A1A;border-radius:var(--radius-m);
+  padding:14px 16px;margin-top:16px;font-size:12px;line-height:1.65;color:#5B4508;
+}
+.sop-cascade b{color:#3D2F04;}
+
 footer.appfoot{
   text-align:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);
   padding:18px 20px 26px;
@@ -743,7 +800,7 @@ footer.appfoot{
         <div class="panel-head">
           <div>
             <h2 id="flowTitle">Flowline</h2>
-            <p>Location (zone) on the vertical axis, calendar time on the horizontal axis. Diagonal bands trace each trade's takt rhythm as it hands off from wagon to wagon; slope shows production rate, parallel bands show a stable takt.</p>
+            <p>Location (zone) on the vertical axis, calendar time on the horizontal axis. Diagonal bands trace each trade's takt rhythm as it hands off from wagon to wagon; slope shows production rate, parallel bands show a stable takt. Click a zone's name on the left to move its start date.</p>
           </div>
         </div>
         <div class="chart-card">
@@ -923,7 +980,7 @@ footer.appfoot{
         <div class="dash-cols">
           <div class="card">
             <h4>Zone Durations</h4>
-            <div class="desc">Calendar span of each wagon, start to finish — the raw material for checking takt consistency.</div>
+            <div class="desc">Calendar span of each wagon, start to finish — click a bar to move that zone's start date.</div>
             <div id="zoneBars"></div>
           </div>
           <div class="card">
@@ -937,7 +994,7 @@ footer.appfoot{
       <section class="panel" id="panel-sop">
         <div class="panel-head">
           <div>
-            <h2>SOP — Daily Log &amp; History</h2>
+            <h2>SOP — Daily Log, History &amp; Takt Plan Edits</h2>
             <p>How to keep the board current and build a reliable historical record, since there's no server behind this — the Excel file you export <em>is</em> the shared record, and the shared Drive folder <em>is</em> the sync mechanism.</p>
           </div>
         </div>
@@ -1010,6 +1067,37 @@ footer.appfoot{
             </ul>
           </div>
         </div>
+
+        <h3 class="sop-subhead">Changing the Takt Plan</h3>
+        <p class="sop-subhead-desc">The issued programme is the starting point, not a fixed constraint — zones and individual activities can be resequenced two ways. Both update the whole board immediately: Flowline, Zone Map, Time-Chainage Grid, Dashboard, Look-Ahead.</p>
+
+        <div class="dash-cols">
+          <div class="card">
+            <h4>Method 1 — Edit directly in the app</h4>
+            <div class="desc">Fastest for a single change. No Excel involved.</div>
+            <ol class="sop-steps">
+              <li><b>Move a whole zone</b> — on the <b>Flowline</b> tab, click the zone's name in the left "Zone / Wagon" column (or on <b>Dashboard</b>, click its bar under Zone Durations). Pick a new start date → <span class="kbd">Move zone here</span>. Every activity in that zone shifts together, keeping its own durations.</li>
+              <li><b>Edit one activity</b> — on the <b>Flowline</b> tab, click any individual coloured segment (not the zone name — the bar itself). Set a new start date and/or duration in working days → <span class="kbd">Apply to this activity</span>. Only that activity and whatever follows it <em>in the same zone</em> shifts; everything earlier in that zone stays put.</li>
+              <li><b>Undo one change</b> — reopen the same zone or activity; a <span class="kbd">Reset this zone</span> / <span class="kbd">Reset this activity</span> button appears once something's been edited.</li>
+              <li><b>Undo everything</b> — Daily Log tab → <span class="kbd">↺ Reset Schedule</span> reverts every zone and activity to the originally issued programme dates.</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h4>Method 2 — Edit via Excel</h4>
+            <div class="desc">Best for planning offline, or proposing a resequencing to the team before committing it.</div>
+            <ol class="sop-steps excel-flavor">
+              <li><b>Export</b> — Daily Log tab → <span class="kbd">⬇ Export Excel</span>.</li>
+              <li><b>Open the "Zone Schedule" sheet</b> — one row per zone, with its current start/end dates already filled in.</li>
+              <li><b>Fill in "New Start Date"</b> for any zone you want to move — leave every other zone's cell blank. This sheet only moves whole zones; edit individual activities in the app itself (Method 1).</li>
+              <li><b>Re-import</b> — Daily Log tab → <span class="kbd">⬆ Import Excel</span> → pick the edited file. The app rebuilds that zone's activity chain from the new date, same durations, Sundays skipped.</li>
+              <li><b>Verify</b> — export again and check the <b>"Resequenced?"</b> column: it flags exactly which zones have been moved and whether individual activities inside them were also touched.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="sop-cascade">
+          <b>What does — and doesn't — move automatically:</b> a schedule edit only shifts the zone or activity you touched (and, for an activity edit, whatever comes after it in that same zone). Nothing cascades to other zones, even ones that were takt-chained to it in the original plan — if stretching Excavation in Part A1 should logically push Part A2 as well, that's on you to go make that edit too. This is deliberate: auto-cascading a whole schedule silently is a good way to hide a real problem. Check the Flowline's crossing lines and the Dashboard's "Peak Concurrent Zones" after any edit — that's the tool's way of showing you when a resequencing creates an overlap or a gap.
+        </div>
       </section>
     </main>
   </div>
@@ -1021,6 +1109,19 @@ footer.appfoot{
 <div class="status-popover" id="statusPopover" style="display:none;">
   <div class="sp-head" id="spHead"></div>
   <div class="sp-options" id="spOptions"></div>
+</div>
+<div class="status-popover schedule-popover" id="schedulePopover" style="display:none;">
+  <div class="sp-head" id="schedHead"></div>
+  <label class="sched-label" id="schedDateLabel">New start date</label>
+  <input type="date" id="schedDateInput" class="sched-date-input">
+  <label class="sched-label" id="schedDurLabel" style="display:none;">Duration (working days)</label>
+  <input type="number" id="schedDurInput" class="sched-date-input" min="1" max="60" style="display:none;">
+  <div class="sched-hint" id="schedHint"></div>
+  <div class="sched-btn-row">
+    <button class="sp-opt sched-apply" id="schedApply">Move zone here</button>
+    <button class="sp-opt sched-reset" id="schedResetOne" style="display:none;">Reset this zone</button>
+    <button class="sp-opt sched-cancel" id="schedCancel">Cancel</button>
+  </div>
 </div>
 
 <script>
@@ -1164,7 +1265,24 @@ const TODAY = todayISO();
    time so edits are always relative to the original, not stacked.
 --------------------------------------------------------------------- */
 const SCHEDULE_KEY = "skn4c49_schedule_overrides_v1";
-function loadScheduleOverrides(){ try{ return JSON.parse(localStorage.getItem(SCHEDULE_KEY)) || {}; }catch(e){ return {}; } }
+function loadScheduleOverrides(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(SCHEDULE_KEY)) || {};
+    // migrate pre-existing overrides saved in the old format (a plain ISO date
+    // string per zone) to the current per-activity anchor format {0:{start:...}}
+    let migrated = false;
+    Object.keys(raw).forEach(k=>{
+      if(typeof raw[k] === "string"){
+        raw[k] = {0:{start:raw[k]}};
+        migrated = true;
+      }
+    });
+    if(migrated){
+      try{ localStorage.setItem(SCHEDULE_KEY, JSON.stringify(raw)); }catch(e){}
+    }
+    return raw;
+  }catch(e){ return {}; }
+}
 function saveScheduleOverrides(o){ try{ localStorage.setItem(SCHEDULE_KEY, JSON.stringify(o)); }catch(e){} }
 function zoneOverrideKey(disc,pkg,zone){ return disc+"|"+pkg+"|"+zone; }
 
@@ -1189,17 +1307,27 @@ function nextWorkingDay(iso){ return isSunday(iso) ? addDays(iso,1).toISOString(
 function segmentsToDurations(segs){
   return segs.map(s=>({label:s.label, code:s.code, wd: workingDaysSpanCount(s.start,s.end)}));
 }
-// Rebuilds a zone's full activity chain from a new start date, preserving each
-// activity's own working-day duration exactly (skips Sundays), the same way the
-// original programme's dates were derived.
-function buildSegmentsFromStart(startISO, durs){
+// Rebuilds a zone's full activity chain from its ORIGINAL segments plus a sparse set of
+// per-activity anchors. Each anchor can override that activity's own start date and/or
+// working-day duration; everything else in the chain cascades naturally (next activity
+// starts the working day after the previous one ends, at its own original duration) —
+// so a whole-zone move is just an anchor on activity 0, and a single mid-chain edit
+// ripples forward from wherever it's set, without disturbing anything before it.
+function buildZoneWithAnchors(rawSegs, anchors){
+  if(typeof anchors === "string") anchors = {0:{start:anchors}}; // defensive: old-format fallback
+  const durs = segmentsToDurations(rawSegs);
   const out = [];
-  let cursor = nextWorkingDay(startISO);
-  durs.forEach(d=>{
-    const segStart = cursor;
-    const segEnd = addWorkingDays(segStart, d.wd-1);
-    out.push({label:d.label, code:d.code, start:segStart, end:segEnd});
-    cursor = addWorkingDays(segEnd, 1);
+  let cursor = null;
+  durs.forEach((d,idx)=>{
+    const a = anchors && anchors[idx];
+    const wd = (a && a.wd) ? a.wd : d.wd;
+    let start;
+    if(a && a.start) start = nextWorkingDay(a.start);
+    else if(cursor) start = cursor;
+    else start = rawSegs[idx].start;
+    const end = addWorkingDays(start, wd-1);
+    out.push({label:d.label, code:d.code, start, end});
+    cursor = addWorkingDays(end,1);
   });
   return out;
 }
@@ -1208,10 +1336,9 @@ function applyScheduleOverrides(raw, overrides){
   const cloned = JSON.parse(JSON.stringify(raw));
   Object.keys(overrides).forEach(key=>{
     const [disc,pkg,zone] = key.split("|");
-    const zoneSegs = cloned[disc] && cloned[disc][pkg] && cloned[disc][pkg][zone];
-    if(!zoneSegs) return;
-    const durs = segmentsToDurations(zoneSegs);
-    cloned[disc][pkg][zone] = buildSegmentsFromStart(overrides[key], durs);
+    const rawZoneSegs = raw[disc] && raw[disc][pkg] && raw[disc][pkg][zone];
+    if(!rawZoneSegs) return;
+    cloned[disc][pkg][zone] = buildZoneWithAnchors(rawZoneSegs, overrides[key]);
   });
   return cloned;
 }
@@ -1389,6 +1516,11 @@ function drawFlow(){
     div.style.height = BAND_H+"px";
     const durTxt = dayDiff(segs[0].start, segs[segs.length-1].end)+1;
     div.innerHTML = `<span class="fz-name">${name}</span><span class="fz-sub">${segs.length} activities · ${durTxt}d</span>`;
+    div.title = "Click to move this zone's start date";
+    div.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      openScheduleEditPopover(e, state.discipline, state.package, name);
+    });
     labelsWrap.appendChild(div);
   });
 
@@ -1431,12 +1563,12 @@ function drawFlow(){
   zones.forEach(([name,segs],zi)=>{
     const yTop = HEAD_H + zi*BAND_H;
     const yMid = yTop + BAND_H/2;
-    segs.forEach(seg=>{
+    segs.forEach((seg,idx)=>{
       const isoDim = state.isolate && state.isolate!==seg.label;
       const bx = x(seg.start);
       const bw = xEnd(seg.end) - bx;
       const color = colorFor(seg.label);
-      const g = el("g",{style:"cursor:pointer;"},svg);
+      const g = el("g",{class:"flow-actbar", style:"cursor:pointer;"},svg);
       const rect = el("rect",{
         x:bx, y:yMid-barH/2, width:Math.max(bw-2,2), height:barH, rx:4,
         fill:color, opacity: isoDim ? 0.16 : 0.92,
@@ -1447,9 +1579,14 @@ function drawFlow(){
         code.textContent = seg.code;
       }
       g.addEventListener("mousemove",(e)=>{
-        showTip(e, `<b>${name}</b>${seg.label}<span class="tip-code">${seg.code}</span><div class="tip-dates">${fmtLong(seg.start)} → ${fmtLong(seg.end)} · ${dayDiff(seg.start,seg.end)+1}d</div>`);
+        showTip(e, `<b>${name}</b>${seg.label}<span class="tip-code">${seg.code}</span><div class="tip-dates">${fmtLong(seg.start)} → ${fmtLong(seg.end)} · ${dayDiff(seg.start,seg.end)+1}d</div><div class="tip-dates" style="color:#E36A2E;margin-top:3px;">click to edit this activity</div>`);
       });
       g.addEventListener("mouseleave", hideTip);
+      g.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        hideTip();
+        openActivityEditPopover(e, state.discipline, state.package, name, idx, seg);
+      });
 
       if(!flowPoints[seg.label]) flowPoints[seg.label]=[];
       flowPoints[seg.label].push({x:bx+2, y:yMid, x2:bx+Math.max(bw-2,2), zi});
@@ -1639,6 +1776,143 @@ document.addEventListener("click",(e)=>{
 document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeStatusPopover(); });
 
 /* ---------------------------------------------------------------------
+   SCHEDULE EDIT POPOVER — click a zone on Flowline/Dashboard to move it
+--------------------------------------------------------------------- */
+function openScheduleEditPopover(evt, disc, pkg, zone){
+  const pop = document.getElementById("schedulePopover");
+  const segs = DATA[disc][pkg][zone];
+  const curStart = segs[0].start;
+  const curEnd = segs[segs.length-1].end;
+  const durWd = segs.reduce((sum,s)=>sum+workingDaysSpanCount(s.start,s.end),0);
+
+  document.getElementById("schedHead").innerHTML =
+    `<b>${zone}</b>${pkg} · ${fmtLong(curStart)} → ${fmtLong(curEnd)}`;
+  document.getElementById("schedDateLabel").textContent = "New start date";
+  const input = document.getElementById("schedDateInput");
+  input.value = curStart;
+  document.getElementById("schedDurLabel").style.display = "none";
+  document.getElementById("schedDurInput").style.display = "none";
+  document.getElementById("schedHint").innerHTML =
+    `${segs.length} activities, ${durWd} working days total will shift as one block, keeping their own durations. Other zones aren't moved automatically. Any individual activity tweaks you've made in this zone will be cleared.`;
+  document.getElementById("schedHint").className = "sched-hint";
+
+  const overrides = loadScheduleOverrides();
+  const key = zoneOverrideKey(disc,pkg,zone);
+  const hasOverride = !!overrides[key];
+  const resetBtn = document.getElementById("schedResetOne");
+  resetBtn.style.display = hasOverride ? "block" : "none";
+  resetBtn.textContent = "Reset this zone";
+
+  document.getElementById("schedApply").textContent = "Move zone here";
+  document.getElementById("schedApply").onclick = ()=>{
+    const val = input.value;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(val)){
+      document.getElementById("schedHint").textContent = "Pick a valid date first.";
+      document.getElementById("schedHint").className = "sched-hint warn";
+      return;
+    }
+    const ov = loadScheduleOverrides();
+    ov[key] = {0:{start:val}};
+    saveScheduleOverrides(ov);
+    reloadSchedule();
+    renderAll();
+    closeSchedulePopover();
+  };
+  resetBtn.onclick = ()=>{
+    const ov = loadScheduleOverrides();
+    delete ov[key];
+    saveScheduleOverrides(ov);
+    reloadSchedule();
+    renderAll();
+    closeSchedulePopover();
+  };
+  document.getElementById("schedCancel").onclick = closeSchedulePopover;
+
+  positionPopover(pop, evt);
+}
+
+// Editing a single activity ("intra-bar"): only that activity and everything after it
+// in the same zone shifts; earlier activities in the zone are untouched.
+function openActivityEditPopover(evt, disc, pkg, zone, idx, seg){
+  const pop = document.getElementById("schedulePopover");
+  const curWd = workingDaysSpanCount(seg.start, seg.end);
+
+  document.getElementById("schedHead").innerHTML =
+    `<b>${zone} — ${seg.label}</b>${pkg} · code ${seg.code} · ${fmtLong(seg.start)} → ${fmtLong(seg.end)}`;
+  document.getElementById("schedDateLabel").textContent = "Start date (this activity)";
+  const input = document.getElementById("schedDateInput");
+  input.value = seg.start;
+  const durInput = document.getElementById("schedDurInput");
+  document.getElementById("schedDurLabel").style.display = "block";
+  durInput.style.display = "block";
+  durInput.value = curWd;
+  document.getElementById("schedHint").innerHTML =
+    idx===0
+      ? `This is the zone's first activity — changing its start moves the whole zone. Activities after it in ${zone} ripple forward to keep their own durations; activities before it (none, here) stay put.`
+      : `Only "${seg.label}" and whatever comes after it in ${zone} will shift; earlier activities in this zone stay exactly where they are.`;
+  document.getElementById("schedHint").className = "sched-hint";
+
+  const overrides = loadScheduleOverrides();
+  const key = zoneOverrideKey(disc,pkg,zone);
+  const hasOverride = !!(overrides[key] && overrides[key][idx]);
+  const resetBtn = document.getElementById("schedResetOne");
+  resetBtn.style.display = hasOverride ? "block" : "none";
+  resetBtn.textContent = "Reset this activity";
+
+  document.getElementById("schedApply").textContent = "Apply to this activity";
+  document.getElementById("schedApply").onclick = ()=>{
+    const val = input.value;
+    const wdVal = parseInt(durInput.value,10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(val) || !wdVal || wdVal<1){
+      document.getElementById("schedHint").textContent = "Pick a valid date and a duration of at least 1 working day.";
+      document.getElementById("schedHint").className = "sched-hint warn";
+      return;
+    }
+    const ov = loadScheduleOverrides();
+    ov[key] = (ov[key] && typeof ov[key]==="object") ? ov[key] : {};
+    ov[key][idx] = {start:val, wd:wdVal};
+    saveScheduleOverrides(ov);
+    reloadSchedule();
+    renderAll();
+    closeSchedulePopover();
+  };
+  resetBtn.onclick = ()=>{
+    const ov = loadScheduleOverrides();
+    if(ov[key]){
+      delete ov[key][idx];
+      if(Object.keys(ov[key]).length===0) delete ov[key];
+    }
+    saveScheduleOverrides(ov);
+    reloadSchedule();
+    renderAll();
+    closeSchedulePopover();
+  };
+  document.getElementById("schedCancel").onclick = closeSchedulePopover;
+
+  positionPopover(pop, evt);
+}
+
+function positionPopover(pop, evt){
+  pop.style.display = "block";
+  const pw = 270, ph = 300;
+  let x = evt.clientX+10, y = evt.clientY+10;
+  if(x+pw>window.innerWidth) x = evt.clientX-pw-10;
+  if(y+ph>window.innerHeight) y = Math.max(8, window.innerHeight-ph-10);
+  pop.style.left = x+"px";
+  pop.style.top = y+"px";
+}
+function closeSchedulePopover(){
+  document.getElementById("schedulePopover").style.display = "none";
+}
+document.addEventListener("click",(e)=>{
+  const pop = document.getElementById("schedulePopover");
+  if(pop.style.display==="block" && !pop.contains(e.target) && !e.target.closest(".fl-zone, .zonebar-row, .flow-actbar")){
+    closeSchedulePopover();
+  }
+});
+document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeSchedulePopover(); });
+
+/* ---------------------------------------------------------------------
    RENDER: DASHBOARD
 --------------------------------------------------------------------- */
 function drawDash(){
@@ -1713,6 +1987,7 @@ function drawDash(){
     const totalSpan = dur;
     const row = document.createElement("div");
     row.className = "zonebar-row";
+    row.title = "Click to move this zone's start date";
     row.innerHTML = `
       <div class="zn">${name}</div>
       <div class="zonebar-track">
@@ -1720,6 +1995,10 @@ function drawDash(){
       </div>
       <div class="dur">${zd}d</div>
     `;
+    row.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      openScheduleEditPopover(e, state.discipline, state.package, name);
+    });
     zoneBars.appendChild(row);
   });
 
@@ -2857,19 +3136,38 @@ async function buildWorkbook(){
     {header:"Activities", key:"n", width:11},
     {header:"Current Start", key:"cs", width:14},
     {header:"Current End", key:"ce", width:14},
+    {header:"Resequenced?", key:"mod", width:16},
     {header:"New Start Date (edit this)", key:"ns", width:22}
   ];
   styleHeaderRow(zsh.getRow(1));
+  const activeOverrides = loadScheduleOverrides();
   DISCIPLINES.forEach(dd=>{
     packagesOf(dd.key).forEach(pkg=>{
       zonesOf(dd.key,pkg).forEach(([zone,segs])=>{
+        const ovKey = zoneOverrideKey(dd.key,pkg,zone);
+        const zoneOv = activeOverrides[ovKey];
+        let modText = "—";
+        if(zoneOv && typeof zoneOv==="object"){
+          const n = Object.keys(zoneOv).length;
+          if(zoneOv[0]) modText = n>1 ? "Yes — moved + "+(n-1)+" activity edit"+(n-1===1?"":"s") : "Yes — whole zone moved";
+          else modText = "Yes — "+n+" activity"+(n===1?"":"ies")+" edited";
+        }
         const row = zsh.addRow({
           disc:dd.name, pkg, zone, n:segs.length,
-          cs:toDate(segs[0].start), ce:toDate(segs[segs.length-1].end)
+          cs:toDate(segs[0].start), ce:toDate(segs[segs.length-1].end),
+          mod:modText
         });
         row.getCell("cs").numFmt = "dd-mmm-yyyy"; row.getCell("cs").alignment={horizontal:"center"};
         row.getCell("ce").numFmt = "dd-mmm-yyyy"; row.getCell("ce").alignment={horizontal:"center"};
         row.getCell("n").alignment={horizontal:"center"};
+        const modCell = row.getCell("mod");
+        modCell.alignment = {horizontal:"center"};
+        if(modText!=="—"){
+          modCell.fill = {type:"pattern",pattern:"solid",fgColor:{argb:"FFFDEDE1"}};
+          modCell.font = {color:{argb:"FF7A2E0B"}, bold:true, size:10};
+        } else {
+          modCell.font = {color:{argb:"FFB8AF97"}};
+        }
         const nsCell = row.getCell("ns");
         nsCell.numFmt = "dd-mmm-yyyy";
         nsCell.fill = {type:"pattern",pattern:"solid",fgColor:{argb:"FFFFF7EF"}};
@@ -3061,13 +3359,13 @@ async function importExcel(file){
         const discName = (row.getCell(1).value||"").toString().trim();
         const pkg = (row.getCell(2).value||"").toString().trim();
         const zone = (row.getCell(3).value||"").toString().trim();
-        const newStartRaw = row.getCell(7).value;
+        const newStartRaw = row.getCell(8).value;
         if(!discName || !pkg || !zone || !newStartRaw) return;
         const discObj = DISCIPLINES.find(d=>d.name===discName);
         if(!discObj) return;
         const nsISO = (newStartRaw instanceof Date) ? newStartRaw.toISOString().slice(0,10) : String(newStartRaw).slice(0,10);
         if(!/^\d{4}-\d{2}-\d{2}$/.test(nsISO)) return;
-        overrides[zoneOverrideKey(discObj.key,pkg,zone)] = nsISO;
+        overrides[zoneOverrideKey(discObj.key,pkg,zone)] = {0:{start:nsISO}};
         scheduleCount++;
       });
       if(scheduleCount>0){
