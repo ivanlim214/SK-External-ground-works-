@@ -883,12 +883,13 @@ footer.appfoot{
           <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
             <div>
               <h4>Excel Handover</h4>
-              <div class="desc">Export a colour-coded, linked workbook — Site Status has a dropdown in Daily Log, and the Grid sheets read it live via formula, so picking a new status there updates the grid on recalculation. Share it with the team or file it as a site record, then import it back — from this computer or someone else's — to sync everything.</div>
+              <div class="desc">Export a colour-coded, linked workbook — Site Status has a dropdown in Daily Log that the Grid sheets read live via formula, and a <b>Zone Schedule</b> sheet lets you resequence: fill in a new start date for any zone and re-import to actually move it, everywhere in the app — Flowline, Grid, Dashboard, all of it. Share the file with the team or file it as a site record, then import it back to sync.</div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <button class="mtbtn" id="dlExportXlsx" style="width:auto;padding:0 14px;font-size:10.5px;">⬇ Export Excel</button>
               <label class="mtbtn" for="dlImportFile" style="width:auto;padding:0 14px;font-size:10.5px;cursor:pointer;display:inline-flex;align-items:center;">⬆ Import Excel</label>
               <input type="file" id="dlImportFile" accept=".xlsx" style="display:none;">
+              <button class="mtbtn" id="dlResetSchedule" style="width:auto;padding:0 14px;font-size:10.5px;">↺ Reset Schedule</button>
             </div>
           </div>
           <div id="dlImportStatus" class="import-status"></div>
@@ -1070,7 +1071,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 //# sourceMappingURL=exceljs.min.js.map
 </script>
 <script>
-const DATA = {"roadsideDrain":{"Part A":{"Part A1":[{"label":"Excavation","code":"E","start":"2026-07-27","end":"2026-07-29"},{"label":"Bakau Pile Installation","code":"B","start":"2026-07-30","end":"2026-07-30"},{"label":"Lean Concrete","code":"L","start":"2026-07-31","end":"2026-07-31"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-01","end":"2026-08-03"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-04","end":"2026-08-06"},{"label":"Formwork Erection","code":"E","start":"2026-08-07","end":"2026-08-11"},{"label":"Casting","code":"C","start":"2026-08-12","end":"2026-08-12"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-13","end":"2026-08-14"},{"label":"Backfilling","code":"B","start":"2026-08-15","end":"2026-08-15"}],"Part A2":[{"label":"Excavation","code":"E","start":"2026-07-30","end":"2026-08-01"},{"label":"Bakau Pile Installation","code":"B","start":"2026-08-03","end":"2026-08-03"},{"label":"Lean Concrete","code":"L","start":"2026-08-04","end":"2026-08-04"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-05","end":"2026-08-06"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-07","end":"2026-08-11"},{"label":"Formwork Erection","code":"E","start":"2026-08-12","end":"2026-08-14"},{"label":"Casting","code":"C","start":"2026-08-15","end":"2026-08-15"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-17","end":"2026-08-18"},{"label":"Backfilling","code":"B","start":"2026-08-19","end":"2026-08-19"}],"Part A3":[{"label":"Excavation","code":"E","start":"2026-08-03","end":"2026-08-05"},{"label":"Bakau Pile Installation","code":"B","start":"2026-08-06","end":"2026-08-06"},{"label":"Lean Concrete","code":"L","start":"2026-08-07","end":"2026-08-07"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-08","end":"2026-08-11"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-12","end":"2026-08-14"},{"label":"Formwork Erection","code":"E","start":"2026-08-15","end":"2026-08-18"},{"label":"Casting","code":"C","start":"2026-08-19","end":"2026-08-19"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-20","end":"2026-08-21"},{"label":"Backfilling","code":"B","start":"2026-08-22","end":"2026-08-22"}],"Part A4 (Entrance Culvert)":[{"label":"Excavation","code":"E","start":"2026-08-06","end":"2026-08-08"},{"label":"Bakau Pile Installation","code":"B","start":"2026-08-11","end":"2026-08-11"},{"label":"Lean Concrete","code":"L","start":"2026-08-12","end":"2026-08-12"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-13","end":"2026-08-14"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-15","end":"2026-08-18"},{"label":"Formwork Erection","code":"E","start":"2026-08-19","end":"2026-08-21"},{"label":"Casting","code":"C","start":"2026-08-22","end":"2026-08-22"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-24","end":"2026-08-25"},{"label":"Backfilling","code":"B","start":"2026-08-26","end":"2026-08-26"}],"Part A5":[{"label":"Excavation","code":"E","start":"2026-08-11","end":"2026-08-13"},{"label":"Bakau Pile Installation","code":"B","start":"2026-08-14","end":"2026-08-14"},{"label":"Lean Concrete","code":"L","start":"2026-08-15","end":"2026-08-15"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-17","end":"2026-08-18"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-19","end":"2026-08-21"},{"label":"Formwork Erection","code":"E","start":"2026-08-22","end":"2026-08-25"},{"label":"Casting","code":"C","start":"2026-08-26","end":"2026-08-26"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-27","end":"2026-08-28"},{"label":"Backfilling","code":"B","start":"2026-08-29","end":"2026-08-29"}],"Part A6 (Diversion & Connection)":[{"label":"Excavation (Diversion)","code":"DE","start":"2026-08-31","end":"2026-09-02"},{"label":"Temporary Drain Construction","code":"DD","start":"2026-09-03","end":"2026-09-09"},{"label":"Existing Drain Wall Hacking","code":"DW","start":"2026-09-10","end":"2026-09-12"},{"label":"Existing Drain Demolition","code":"DD","start":"2026-09-14","end":"2026-09-19"},{"label":"Excavation","code":"E","start":"2026-09-21","end":"2026-09-22"},{"label":"Bakau Pile Installation","code":"B","start":"2026-09-23","end":"2026-09-23"},{"label":"Lean Concrete","code":"L","start":"2026-09-24","end":"2026-09-24"},{"label":"Precast Drain Installation","code":"P","start":"2026-09-25","end":"2026-09-25"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-09-26","end":"2026-09-28"},{"label":"Formwork Erection","code":"E","start":"2026-09-29","end":"2026-09-30"},{"label":"Casting","code":"C","start":"2026-10-01","end":"2026-10-01"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-02","end":"2026-10-02"},{"label":"Backfilling","code":"B","start":"2026-10-03","end":"2026-10-03"}]},"Part B":{"Part B1":[{"label":"Excavation","code":"E","start":"2026-09-28","end":"2026-09-29"},{"label":"Bakau Pile Installation","code":"B","start":"2026-09-30","end":"2026-09-30"},{"label":"Lean Concrete","code":"L","start":"2026-10-01","end":"2026-10-01"},{"label":"Precast Drain Installation","code":"P","start":"2026-10-02","end":"2026-10-02"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-10-03","end":"2026-10-05"},{"label":"Formwork Erection","code":"E","start":"2026-10-06","end":"2026-10-07"},{"label":"Casting","code":"C","start":"2026-10-08","end":"2026-10-08"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-09","end":"2026-10-09"},{"label":"Backfilling","code":"B","start":"2026-10-10","end":"2026-10-10"}],"Part B2":[{"label":"Excavation","code":"E","start":"2026-09-30","end":"2026-10-01"},{"label":"Bakau Pile Installation","code":"B","start":"2026-10-02","end":"2026-10-02"},{"label":"Lean Concrete","code":"L","start":"2026-10-03","end":"2026-10-03"},{"label":"Precast Drain Installation","code":"P","start":"2026-10-05","end":"2026-10-05"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-10-06","end":"2026-10-07"},{"label":"Formwork Erection","code":"E","start":"2026-10-08","end":"2026-10-09"},{"label":"Casting","code":"C","start":"2026-10-10","end":"2026-10-10"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-12","end":"2026-10-12"},{"label":"Backfilling","code":"B","start":"2026-10-13","end":"2026-10-13"}],"Part B3":[{"label":"Excavation","code":"E","start":"2026-10-02","end":"2026-10-03"},{"label":"Bakau Pile Installation","code":"B","start":"2026-10-05","end":"2026-10-05"},{"label":"Lean Concrete","code":"L","start":"2026-10-06","end":"2026-10-06"},{"label":"Precast Drain Installation","code":"P","start":"2026-10-07","end":"2026-10-07"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-10-08","end":"2026-10-09"},{"label":"Formwork Erection","code":"E","start":"2026-10-10","end":"2026-10-12"},{"label":"Casting","code":"C","start":"2026-10-13","end":"2026-10-13"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-14","end":"2026-10-14"},{"label":"Backfilling","code":"B","start":"2026-10-15","end":"2026-10-15"}],"Part B4":[{"label":"Excavation","code":"E","start":"2026-10-05","end":"2026-10-06"},{"label":"Bakau Pile Installation","code":"B","start":"2026-10-07","end":"2026-10-07"},{"label":"Lean Concrete","code":"L","start":"2026-10-08","end":"2026-10-08"},{"label":"Precast Drain Installation","code":"P","start":"2026-10-09","end":"2026-10-09"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-10-10","end":"2026-10-12"},{"label":"Formwork Erection","code":"E","start":"2026-10-13","end":"2026-10-14"},{"label":"Casting","code":"C","start":"2026-10-15","end":"2026-10-15"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-16","end":"2026-10-16"},{"label":"Backfilling","code":"B","start":"2026-10-17","end":"2026-10-17"}],"Part B5 (Diversion & Connection)":[{"label":"Excavation (Diversion)","code":"DE","start":"2026-10-19","end":"2026-10-21"},{"label":"Temporary Drain Construction","code":"DD","start":"2026-10-22","end":"2026-10-28"},{"label":"Existing Drain Wall Hacking","code":"DW","start":"2026-10-29","end":"2026-10-31"},{"label":"Existing Drain Demolition","code":"DD","start":"2026-11-02","end":"2026-11-07"},{"label":"Excavation","code":"E","start":"2026-11-10","end":"2026-11-11"},{"label":"Bakau Pile Installation","code":"B","start":"2026-11-12","end":"2026-11-12"},{"label":"Lean Concrete","code":"L","start":"2026-11-13","end":"2026-11-13"},{"label":"Precast Drain Installation","code":"P","start":"2026-11-14","end":"2026-11-14"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-11-16","end":"2026-11-16"},{"label":"Formwork Erection","code":"E","start":"2026-11-17","end":"2026-11-18"},{"label":"Casting","code":"C","start":"2026-11-19","end":"2026-11-19"},{"label":"Formwork Dismantling","code":"D","start":"2026-11-20","end":"2026-11-20"},{"label":"Backfilling","code":"B","start":"2026-11-21","end":"2026-11-21"}]}},"minorSewer":{"Manhole Construction":{"MH-B3":[{"label":"Excavation","code":"E","start":"2026-09-28","end":"2026-09-30"},{"label":"Caisson Ring Installation & Casting","code":"C","start":"2026-10-01","end":"2026-10-08"},{"label":"Manhole Base Lean Concrete Casting","code":"L","start":"2026-10-09","end":"2026-10-09"},{"label":"Manhole Base Rebar Work","code":"BR","start":"2026-12-02","end":"2026-12-04"},{"label":"Manhole Base Formwork Erection","code":"BF","start":"2026-12-05","end":"2026-12-07"},{"label":"Manhole Base Casting","code":"BC","start":"2026-12-08","end":"2026-12-08"},{"label":"Manhole Chamber Rebar Work","code":"CR","start":"2026-12-09","end":"2026-12-10"},{"label":"Manhole Chamber Formwork Erection","code":"CF","start":"2026-12-11","end":"2026-12-11"},{"label":"Manhole Chamber Casting","code":"CC","start":"2026-12-12","end":"2026-12-12"},{"label":"Manhole Top Slab Casting","code":"TC","start":"2026-12-14","end":"2026-12-14"},{"label":"Backfilling","code":"B","start":"2026-12-15","end":"2026-12-15"}],"EMH-2 (Open Shaft)":[{"label":"Excavation","code":"E","start":"2026-10-10","end":"2026-10-13"},{"label":"Caisson Ring Installation & Casting","code":"C","start":"2026-10-14","end":"2026-10-21"},{"label":"Manhole Base Lean Concrete Casting","code":"L","start":"2026-10-22","end":"2026-10-22"}],"MH-B2":[{"label":"Excavation","code":"E","start":"2026-10-23","end":"2026-10-26"},{"label":"Caisson Ring Installation & Casting","code":"C","start":"2026-10-27","end":"2026-11-03"},{"label":"Manhole Base Lean Concrete Casting","code":"L","start":"2026-11-04","end":"2026-11-04"},{"label":"Manhole Base Rebar Work","code":"BR","start":"2026-12-18","end":"2026-12-21"},{"label":"Manhole Base Formwork Erection","code":"BF","start":"2026-12-22","end":"2026-12-23"},{"label":"Manhole Base Casting","code":"BC","start":"2026-12-24","end":"2026-12-24"},{"label":"Manhole Chamber Rebar Work","code":"CR","start":"2026-12-26","end":"2026-12-28"},{"label":"Manhole Chamber Formwork Erection","code":"CF","start":"2026-12-29","end":"2026-12-29"},{"label":"Manhole Chamber Casting","code":"CC","start":"2026-12-30","end":"2026-12-30"},{"label":"Manhole Top Slab Casting","code":"TC","start":"2026-12-31","end":"2026-12-31"},{"label":"Backfilling","code":"B","start":"2027-01-02","end":"2027-01-02"},{"label":"Existing Manhole Demolition","code":"M","start":"2027-01-04","end":"2027-01-16"}],"MH-B1":[{"label":"Excavation","code":"E","start":"2026-11-05","end":"2026-11-07"},{"label":"Caisson Ring Installation & Casting","code":"C","start":"2026-11-10","end":"2026-11-17"},{"label":"Manhole Base Lean Concrete Casting","code":"L","start":"2026-11-18","end":"2026-11-18"},{"label":"Manhole Base Rebar Work","code":"BR","start":"2026-12-16","end":"2026-12-18"},{"label":"Manhole Base Formwork Erection","code":"BF","start":"2026-12-19","end":"2026-12-21"},{"label":"Manhole Base Casting","code":"BC","start":"2026-12-22","end":"2026-12-22"},{"label":"Manhole Chamber Rebar Work","code":"CR","start":"2026-12-23","end":"2026-12-24"},{"label":"Manhole Chamber Formwork Erection","code":"CF","start":"2026-12-26","end":"2026-12-26"},{"label":"Manhole Chamber Casting","code":"CC","start":"2026-12-28","end":"2026-12-28"},{"label":"Manhole Top Slab Casting","code":"TC","start":"2026-12-29","end":"2026-12-29"},{"label":"Backfilling","code":"B","start":"2026-12-30","end":"2026-12-30"}]},"Pipe Jacking":{"MH-B3 to EMH-2 (Open Shaft)":[{"label":"Control Room Setting Up","code":"C","start":"2026-10-24","end":"2026-10-28"},{"label":"Jacking Machine Setting Up","code":"J","start":"2026-10-29","end":"2026-11-04"},{"label":"Pipe Jacking","code":"P","start":"2026-11-05","end":"2026-11-11"},{"label":"Hydrostatic Test","code":"T","start":"2026-11-12","end":"2026-11-12"}],"MH-B3 to MH-B2":[{"label":"Control Room Setting Up","code":"J","start":"2026-11-13","end":"2026-11-19"},{"label":"Jacking Machine Setting Up","code":"P","start":"2026-11-20","end":"2026-11-25"},{"label":"Pipe Jacking","code":"T","start":"2026-11-26","end":"2026-11-26"}],"MH-B2 to MH-B1":[{"label":"Control Room Setting Up","code":"J","start":"2026-11-27","end":"2026-12-03"},{"label":"Jacking Machine Setting Up","code":"P","start":"2026-12-04","end":"2026-12-09"},{"label":"Pipe Jacking","code":"T","start":"2026-12-10","end":"2026-12-10"}],"EMH-1 to EMH-2 (Open Shaft)":[{"label":"Pump Station Setting Up & Sewage Overpumping","code":"P","start":"2026-12-07","end":"2026-12-24"},{"label":"Final Sewer Pipe Connection","code":"C","start":"2026-12-26","end":"2026-12-29"},{"label":"Pump Station Dismantling","code":"D","start":"2026-12-30","end":"2027-01-02"}]}}}
+const RAW_DATA = {"roadsideDrain":{"Part A":{"Part A1":[{"label":"Excavation","code":"E","start":"2026-07-27","end":"2026-07-29"},{"label":"Bakau Pile Installation","code":"B","start":"2026-07-30","end":"2026-07-30"},{"label":"Lean Concrete","code":"L","start":"2026-07-31","end":"2026-07-31"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-01","end":"2026-08-03"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-04","end":"2026-08-06"},{"label":"Formwork Erection","code":"E","start":"2026-08-07","end":"2026-08-11"},{"label":"Casting","code":"C","start":"2026-08-12","end":"2026-08-12"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-13","end":"2026-08-14"},{"label":"Backfilling","code":"B","start":"2026-08-15","end":"2026-08-15"}],"Part A2":[{"label":"Excavation","code":"E","start":"2026-07-30","end":"2026-08-01"},{"label":"Bakau Pile Installation","code":"B","start":"2026-08-03","end":"2026-08-03"},{"label":"Lean Concrete","code":"L","start":"2026-08-04","end":"2026-08-04"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-05","end":"2026-08-06"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-07","end":"2026-08-11"},{"label":"Formwork Erection","code":"E","start":"2026-08-12","end":"2026-08-14"},{"label":"Casting","code":"C","start":"2026-08-15","end":"2026-08-15"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-17","end":"2026-08-18"},{"label":"Backfilling","code":"B","start":"2026-08-19","end":"2026-08-19"}],"Part A3":[{"label":"Excavation","code":"E","start":"2026-08-03","end":"2026-08-05"},{"label":"Bakau Pile Installation","code":"B","start":"2026-08-06","end":"2026-08-06"},{"label":"Lean Concrete","code":"L","start":"2026-08-07","end":"2026-08-07"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-08","end":"2026-08-11"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-12","end":"2026-08-14"},{"label":"Formwork Erection","code":"E","start":"2026-08-15","end":"2026-08-18"},{"label":"Casting","code":"C","start":"2026-08-19","end":"2026-08-19"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-20","end":"2026-08-21"},{"label":"Backfilling","code":"B","start":"2026-08-22","end":"2026-08-22"}],"Part A4 (Entrance Culvert)":[{"label":"Excavation","code":"E","start":"2026-08-11","end":"2026-08-13"},{"label":"Bakau Pile Installation","code":"B","start":"2026-08-14","end":"2026-08-14"},{"label":"Lean Concrete","code":"L","start":"2026-08-15","end":"2026-08-15"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-17","end":"2026-08-18"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-19","end":"2026-08-21"},{"label":"Formwork Erection","code":"E","start":"2026-08-22","end":"2026-08-25"},{"label":"Casting","code":"C","start":"2026-08-26","end":"2026-08-26"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-27","end":"2026-08-28"},{"label":"Backfilling","code":"B","start":"2026-08-29","end":"2026-08-29"}],"Part A5":[{"label":"Excavation","code":"E","start":"2026-08-06","end":"2026-08-08"},{"label":"Bakau Pile Installation","code":"B","start":"2026-08-10","end":"2026-08-10"},{"label":"Lean Concrete","code":"L","start":"2026-08-11","end":"2026-08-11"},{"label":"Precast Drain Installation","code":"P","start":"2026-08-12","end":"2026-08-13"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-08-14","end":"2026-08-17"},{"label":"Formwork Erection","code":"E","start":"2026-08-18","end":"2026-08-20"},{"label":"Casting","code":"C","start":"2026-08-21","end":"2026-08-21"},{"label":"Formwork Dismantling","code":"D","start":"2026-08-22","end":"2026-08-24"},{"label":"Backfilling","code":"B","start":"2026-08-25","end":"2026-08-25"}],"Part A6 (Diversion & Connection)":[{"label":"Excavation (Diversion)","code":"DE","start":"2026-08-31","end":"2026-09-02"},{"label":"Temporary Drain Construction","code":"DD","start":"2026-09-03","end":"2026-09-09"},{"label":"Existing Drain Wall Hacking","code":"DW","start":"2026-09-10","end":"2026-09-12"},{"label":"Existing Drain Demolition","code":"DD","start":"2026-09-14","end":"2026-09-19"},{"label":"Excavation","code":"E","start":"2026-09-21","end":"2026-09-22"},{"label":"Bakau Pile Installation","code":"B","start":"2026-09-23","end":"2026-09-23"},{"label":"Lean Concrete","code":"L","start":"2026-09-24","end":"2026-09-24"},{"label":"Precast Drain Installation","code":"P","start":"2026-09-25","end":"2026-09-25"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-09-26","end":"2026-09-28"},{"label":"Formwork Erection","code":"E","start":"2026-09-29","end":"2026-09-30"},{"label":"Casting","code":"C","start":"2026-10-01","end":"2026-10-01"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-02","end":"2026-10-02"},{"label":"Backfilling","code":"B","start":"2026-10-03","end":"2026-10-03"}]},"Part B":{"Part B1":[{"label":"Excavation","code":"E","start":"2026-09-28","end":"2026-09-29"},{"label":"Bakau Pile Installation","code":"B","start":"2026-09-30","end":"2026-09-30"},{"label":"Lean Concrete","code":"L","start":"2026-10-01","end":"2026-10-01"},{"label":"Precast Drain Installation","code":"P","start":"2026-10-02","end":"2026-10-02"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-10-03","end":"2026-10-05"},{"label":"Formwork Erection","code":"E","start":"2026-10-06","end":"2026-10-07"},{"label":"Casting","code":"C","start":"2026-10-08","end":"2026-10-08"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-09","end":"2026-10-09"},{"label":"Backfilling","code":"B","start":"2026-10-10","end":"2026-10-10"}],"Part B2":[{"label":"Excavation","code":"E","start":"2026-09-30","end":"2026-10-01"},{"label":"Bakau Pile Installation","code":"B","start":"2026-10-02","end":"2026-10-02"},{"label":"Lean Concrete","code":"L","start":"2026-10-03","end":"2026-10-03"},{"label":"Precast Drain Installation","code":"P","start":"2026-10-05","end":"2026-10-05"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-10-06","end":"2026-10-07"},{"label":"Formwork Erection","code":"E","start":"2026-10-08","end":"2026-10-09"},{"label":"Casting","code":"C","start":"2026-10-10","end":"2026-10-10"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-12","end":"2026-10-12"},{"label":"Backfilling","code":"B","start":"2026-10-13","end":"2026-10-13"}],"Part B3":[{"label":"Excavation","code":"E","start":"2026-10-02","end":"2026-10-03"},{"label":"Bakau Pile Installation","code":"B","start":"2026-10-05","end":"2026-10-05"},{"label":"Lean Concrete","code":"L","start":"2026-10-06","end":"2026-10-06"},{"label":"Precast Drain Installation","code":"P","start":"2026-10-07","end":"2026-10-07"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-10-08","end":"2026-10-09"},{"label":"Formwork Erection","code":"E","start":"2026-10-10","end":"2026-10-12"},{"label":"Casting","code":"C","start":"2026-10-13","end":"2026-10-13"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-14","end":"2026-10-14"},{"label":"Backfilling","code":"B","start":"2026-10-15","end":"2026-10-15"}],"Part B4":[{"label":"Excavation","code":"E","start":"2026-10-05","end":"2026-10-06"},{"label":"Bakau Pile Installation","code":"B","start":"2026-10-07","end":"2026-10-07"},{"label":"Lean Concrete","code":"L","start":"2026-10-08","end":"2026-10-08"},{"label":"Precast Drain Installation","code":"P","start":"2026-10-09","end":"2026-10-09"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-10-10","end":"2026-10-12"},{"label":"Formwork Erection","code":"E","start":"2026-10-13","end":"2026-10-14"},{"label":"Casting","code":"C","start":"2026-10-15","end":"2026-10-15"},{"label":"Formwork Dismantling","code":"D","start":"2026-10-16","end":"2026-10-16"},{"label":"Backfilling","code":"B","start":"2026-10-17","end":"2026-10-17"}],"Part B5 (Diversion & Connection)":[{"label":"Excavation (Diversion)","code":"DE","start":"2026-10-19","end":"2026-10-21"},{"label":"Temporary Drain Construction","code":"DD","start":"2026-10-22","end":"2026-10-28"},{"label":"Existing Drain Wall Hacking","code":"DW","start":"2026-10-29","end":"2026-10-31"},{"label":"Existing Drain Demolition","code":"DD","start":"2026-11-02","end":"2026-11-07"},{"label":"Excavation","code":"E","start":"2026-11-10","end":"2026-11-11"},{"label":"Bakau Pile Installation","code":"B","start":"2026-11-12","end":"2026-11-12"},{"label":"Lean Concrete","code":"L","start":"2026-11-13","end":"2026-11-13"},{"label":"Precast Drain Installation","code":"P","start":"2026-11-14","end":"2026-11-14"},{"label":"Drain Wall & Top Slab Rebar Work","code":"R","start":"2026-11-16","end":"2026-11-16"},{"label":"Formwork Erection","code":"E","start":"2026-11-17","end":"2026-11-18"},{"label":"Casting","code":"C","start":"2026-11-19","end":"2026-11-19"},{"label":"Formwork Dismantling","code":"D","start":"2026-11-20","end":"2026-11-20"},{"label":"Backfilling","code":"B","start":"2026-11-21","end":"2026-11-21"}]}},"minorSewer":{"Manhole Construction":{"MH-B3":[{"label":"Excavation","code":"E","start":"2026-09-28","end":"2026-09-30"},{"label":"Caisson Ring Installation & Casting","code":"C","start":"2026-10-01","end":"2026-10-08"},{"label":"Manhole Base Lean Concrete Casting","code":"L","start":"2026-10-09","end":"2026-10-09"},{"label":"Manhole Base Rebar Work","code":"BR","start":"2026-12-02","end":"2026-12-04"},{"label":"Manhole Base Formwork Erection","code":"BF","start":"2026-12-05","end":"2026-12-07"},{"label":"Manhole Base Casting","code":"BC","start":"2026-12-08","end":"2026-12-08"},{"label":"Manhole Chamber Rebar Work","code":"CR","start":"2026-12-09","end":"2026-12-10"},{"label":"Manhole Chamber Formwork Erection","code":"CF","start":"2026-12-11","end":"2026-12-11"},{"label":"Manhole Chamber Casting","code":"CC","start":"2026-12-12","end":"2026-12-12"},{"label":"Manhole Top Slab Casting","code":"TC","start":"2026-12-14","end":"2026-12-14"},{"label":"Backfilling","code":"B","start":"2026-12-15","end":"2026-12-15"}],"EMH-2 (Open Shaft)":[{"label":"Excavation","code":"E","start":"2026-10-10","end":"2026-10-13"},{"label":"Caisson Ring Installation & Casting","code":"C","start":"2026-10-14","end":"2026-10-21"},{"label":"Manhole Base Lean Concrete Casting","code":"L","start":"2026-10-22","end":"2026-10-22"}],"MH-B2":[{"label":"Excavation","code":"E","start":"2026-10-23","end":"2026-10-26"},{"label":"Caisson Ring Installation & Casting","code":"C","start":"2026-10-27","end":"2026-11-03"},{"label":"Manhole Base Lean Concrete Casting","code":"L","start":"2026-11-04","end":"2026-11-04"},{"label":"Manhole Base Rebar Work","code":"BR","start":"2026-12-18","end":"2026-12-21"},{"label":"Manhole Base Formwork Erection","code":"BF","start":"2026-12-22","end":"2026-12-23"},{"label":"Manhole Base Casting","code":"BC","start":"2026-12-24","end":"2026-12-24"},{"label":"Manhole Chamber Rebar Work","code":"CR","start":"2026-12-26","end":"2026-12-28"},{"label":"Manhole Chamber Formwork Erection","code":"CF","start":"2026-12-29","end":"2026-12-29"},{"label":"Manhole Chamber Casting","code":"CC","start":"2026-12-30","end":"2026-12-30"},{"label":"Manhole Top Slab Casting","code":"TC","start":"2026-12-31","end":"2026-12-31"},{"label":"Backfilling","code":"B","start":"2027-01-02","end":"2027-01-02"},{"label":"Existing Manhole Demolition","code":"M","start":"2027-01-04","end":"2027-01-16"}],"MH-B1":[{"label":"Excavation","code":"E","start":"2026-11-05","end":"2026-11-07"},{"label":"Caisson Ring Installation & Casting","code":"C","start":"2026-11-10","end":"2026-11-17"},{"label":"Manhole Base Lean Concrete Casting","code":"L","start":"2026-11-18","end":"2026-11-18"},{"label":"Manhole Base Rebar Work","code":"BR","start":"2026-12-16","end":"2026-12-18"},{"label":"Manhole Base Formwork Erection","code":"BF","start":"2026-12-19","end":"2026-12-21"},{"label":"Manhole Base Casting","code":"BC","start":"2026-12-22","end":"2026-12-22"},{"label":"Manhole Chamber Rebar Work","code":"CR","start":"2026-12-23","end":"2026-12-24"},{"label":"Manhole Chamber Formwork Erection","code":"CF","start":"2026-12-26","end":"2026-12-26"},{"label":"Manhole Chamber Casting","code":"CC","start":"2026-12-28","end":"2026-12-28"},{"label":"Manhole Top Slab Casting","code":"TC","start":"2026-12-29","end":"2026-12-29"},{"label":"Backfilling","code":"B","start":"2026-12-30","end":"2026-12-30"}]},"Pipe Jacking":{"MH-B3 to EMH-2 (Open Shaft)":[{"label":"Control Room Setting Up","code":"C","start":"2026-10-24","end":"2026-10-28"},{"label":"Jacking Machine Setting Up","code":"J","start":"2026-10-29","end":"2026-11-04"},{"label":"Pipe Jacking","code":"P","start":"2026-11-05","end":"2026-11-11"},{"label":"Hydrostatic Test","code":"T","start":"2026-11-12","end":"2026-11-12"}],"MH-B3 to MH-B2":[{"label":"Control Room Setting Up","code":"J","start":"2026-11-13","end":"2026-11-19"},{"label":"Jacking Machine Setting Up","code":"P","start":"2026-11-20","end":"2026-11-25"},{"label":"Pipe Jacking","code":"T","start":"2026-11-26","end":"2026-11-26"}],"MH-B2 to MH-B1":[{"label":"Control Room Setting Up","code":"J","start":"2026-11-27","end":"2026-12-03"},{"label":"Jacking Machine Setting Up","code":"P","start":"2026-12-04","end":"2026-12-09"},{"label":"Pipe Jacking","code":"T","start":"2026-12-10","end":"2026-12-10"}],"EMH-1 to EMH-2 (Open Shaft)":[{"label":"Pump Station Setting Up & Sewage Overpumping","code":"P","start":"2026-12-07","end":"2026-12-24"},{"label":"Final Sewer Pipe Connection","code":"C","start":"2026-12-26","end":"2026-12-29"},{"label":"Pump Station Dismantling","code":"D","start":"2026-12-30","end":"2027-01-02"}]}}}
 ;
 </script>
 <script>
@@ -1155,6 +1156,71 @@ function todayISO(){
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 const TODAY = todayISO();
+
+/* ---------------------------------------------------------------------
+   SCHEDULE OVERRIDES — zone start-date resequencing via Excel import.
+   RAW_DATA (from the issued programme) never changes; DATA is RAW_DATA
+   with any saved zone-start overrides re-applied, recomputed fresh each
+   time so edits are always relative to the original, not stacked.
+--------------------------------------------------------------------- */
+const SCHEDULE_KEY = "skn4c49_schedule_overrides_v1";
+function loadScheduleOverrides(){ try{ return JSON.parse(localStorage.getItem(SCHEDULE_KEY)) || {}; }catch(e){ return {}; } }
+function saveScheduleOverrides(o){ try{ localStorage.setItem(SCHEDULE_KEY, JSON.stringify(o)); }catch(e){} }
+function zoneOverrideKey(disc,pkg,zone){ return disc+"|"+pkg+"|"+zone; }
+
+function workingDaysSpanCount(startISO, endISO){
+  let d = startISO, n = 0;
+  while(d <= endISO){
+    if(!isSunday(d)) n++;
+    d = addDays(d,1).toISOString().slice(0,10);
+  }
+  return n;
+}
+function addWorkingDays(startISO, n){
+  let d = startISO, count = 0;
+  while(count < n){
+    d = addDays(d,1).toISOString().slice(0,10);
+    if(!isSunday(d)) count++;
+  }
+  return d;
+}
+function nextWorkingDay(iso){ return isSunday(iso) ? addDays(iso,1).toISOString().slice(0,10) : iso; }
+
+function segmentsToDurations(segs){
+  return segs.map(s=>({label:s.label, code:s.code, wd: workingDaysSpanCount(s.start,s.end)}));
+}
+// Rebuilds a zone's full activity chain from a new start date, preserving each
+// activity's own working-day duration exactly (skips Sundays), the same way the
+// original programme's dates were derived.
+function buildSegmentsFromStart(startISO, durs){
+  const out = [];
+  let cursor = nextWorkingDay(startISO);
+  durs.forEach(d=>{
+    const segStart = cursor;
+    const segEnd = addWorkingDays(segStart, d.wd-1);
+    out.push({label:d.label, code:d.code, start:segStart, end:segEnd});
+    cursor = addWorkingDays(segEnd, 1);
+  });
+  return out;
+}
+
+function applyScheduleOverrides(raw, overrides){
+  const cloned = JSON.parse(JSON.stringify(raw));
+  Object.keys(overrides).forEach(key=>{
+    const [disc,pkg,zone] = key.split("|");
+    const zoneSegs = cloned[disc] && cloned[disc][pkg] && cloned[disc][pkg][zone];
+    if(!zoneSegs) return;
+    const durs = segmentsToDurations(zoneSegs);
+    cloned[disc][pkg][zone] = buildSegmentsFromStart(overrides[key], durs);
+  });
+  return cloned;
+}
+
+let DATA = applyScheduleOverrides(RAW_DATA, loadScheduleOverrides());
+function reloadSchedule(){
+  DATA = applyScheduleOverrides(RAW_DATA, loadScheduleOverrides());
+  rebuildFlatTasks();
+}
 
 /* ---------------------------------------------------------------------
    DATA ACCESSORS
@@ -2037,7 +2103,8 @@ const RFV_REASONS = [
 
 // Flatten every activity across the whole dataset into one task pool
 const FLAT_TASKS = [];
-(function buildFlatTasks(){
+function rebuildFlatTasks(){
+  FLAT_TASKS.length = 0;
   DISCIPLINES.forEach(d=>{
     packagesOf(d.key).forEach(pkg=>{
       zonesOf(d.key,pkg).forEach(([zone,segs])=>{
@@ -2053,7 +2120,8 @@ const FLAT_TASKS = [];
       });
     });
   });
-})();
+}
+rebuildFlatTasks();
 
 function mondayOf(iso){
   const dt = toDate(iso);
@@ -2518,6 +2586,19 @@ function initDailyLogControls(){
     if(e.target.files && e.target.files[0]) importExcel(e.target.files[0]);
     e.target.value = "";
   };
+  document.getElementById("dlResetSchedule").onclick = ()=>{
+    const overrides = loadScheduleOverrides();
+    if(Object.keys(overrides).length===0){
+      showImportStatus("Schedule is already at the original programme dates.", "ok");
+      return;
+    }
+    if(confirm("Reset every resequenced zone back to the original issued programme dates? This cannot be undone.")){
+      saveScheduleOverrides({});
+      reloadSchedule();
+      renderAll();
+      showImportStatus("Schedule reset to the original issued programme.", "ok");
+    }
+  };
 }
 
 function showImportStatus(msg, kind){
@@ -2764,6 +2845,43 @@ async function buildWorkbook(){
     borderRow(row);
   });
 
+  /* ---- Zone Schedule sheet — the resequencing control surface.
+     Fill in "New Start Date" for any zone and re-import: the app recomputes that
+     zone's whole activity chain from the new date (same working-day durations,
+     Sundays skipped), exactly like every other zone was originally derived. ---- */
+  const zsh = wb.addWorksheet("Zone Schedule", {views:[{state:"frozen", ySplit:1}]});
+  zsh.columns = [
+    {header:"Discipline", key:"disc", width:16},
+    {header:"Package", key:"pkg", width:16},
+    {header:"Zone", key:"zone", width:30},
+    {header:"Activities", key:"n", width:11},
+    {header:"Current Start", key:"cs", width:14},
+    {header:"Current End", key:"ce", width:14},
+    {header:"New Start Date (edit this)", key:"ns", width:22}
+  ];
+  styleHeaderRow(zsh.getRow(1));
+  DISCIPLINES.forEach(dd=>{
+    packagesOf(dd.key).forEach(pkg=>{
+      zonesOf(dd.key,pkg).forEach(([zone,segs])=>{
+        const row = zsh.addRow({
+          disc:dd.name, pkg, zone, n:segs.length,
+          cs:toDate(segs[0].start), ce:toDate(segs[segs.length-1].end)
+        });
+        row.getCell("cs").numFmt = "dd-mmm-yyyy"; row.getCell("cs").alignment={horizontal:"center"};
+        row.getCell("ce").numFmt = "dd-mmm-yyyy"; row.getCell("ce").alignment={horizontal:"center"};
+        row.getCell("n").alignment={horizontal:"center"};
+        const nsCell = row.getCell("ns");
+        nsCell.numFmt = "dd-mmm-yyyy";
+        nsCell.fill = {type:"pattern",pattern:"solid",fgColor:{argb:"FFFFF7EF"}};
+        nsCell.border = {top:{style:"thin",color:{argb:"FFC99A1A"}},left:{style:"thin",color:{argb:"FFC99A1A"}},
+                          bottom:{style:"thin",color:{argb:"FFC99A1A"}},right:{style:"thin",color:{argb:"FFC99A1A"}}};
+        borderRow(row);
+      });
+    });
+  });
+  zsh.getCell("A"+(zsh.rowCount+2)).value = "Leave \"New Start Date\" blank to keep a zone where it is. Fill in a date and re-import to move that zone — its own activity durations (working days, Sundays skipped) carry over unchanged, only the start shifts. Other zones are not moved automatically; check the Flowline tab after importing for any new overlaps.";
+  zsh.getCell("A"+(zsh.rowCount)).font = {italic:true, size:10, color:{argb:"FF5B6270"}};
+
   /* ---- Colour-coded grid sheets (one per discipline; columns already chronological) ----
      Each populated cell is a live formula pointing at its Daily Log row's Site Status,
      so editing the dropdown there updates the grid on recalculation — no re-export needed. */
@@ -2934,15 +3052,41 @@ async function importExcel(file){
       saveLog(weeklyLog);
     }
 
-    if(dailyCount===0 && weeklyCount===0 && siteCount===0){
-      showImportStatus("No recognisable log rows found in "+file.name+". Expecting 'Daily Log' / 'Weekly Log' sheets from an export of this board.", "err");
-    } else {
-      showImportStatus("Imported "+dailyCount+" daily, "+weeklyCount+" weekly and "+siteCount+" site-status entries from "+file.name+".", "ok");
+    const zsh = wb.getWorksheet("Zone Schedule");
+    let scheduleCount = 0;
+    if(zsh){
+      const overrides = loadScheduleOverrides();
+      zsh.eachRow({includeEmpty:false},(row,rowNum)=>{
+        if(rowNum===1) return;
+        const discName = (row.getCell(1).value||"").toString().trim();
+        const pkg = (row.getCell(2).value||"").toString().trim();
+        const zone = (row.getCell(3).value||"").toString().trim();
+        const newStartRaw = row.getCell(7).value;
+        if(!discName || !pkg || !zone || !newStartRaw) return;
+        const discObj = DISCIPLINES.find(d=>d.name===discName);
+        if(!discObj) return;
+        const nsISO = (newStartRaw instanceof Date) ? newStartRaw.toISOString().slice(0,10) : String(newStartRaw).slice(0,10);
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(nsISO)) return;
+        overrides[zoneOverrideKey(discObj.key,pkg,zone)] = nsISO;
+        scheduleCount++;
+      });
+      if(scheduleCount>0){
+        saveScheduleOverrides(overrides);
+        reloadSchedule();
+      }
     }
-    if(state.view==="daily") drawDailyLog();
-    if(state.view==="lookahead") drawLookahead();
-    if(state.view==="grid") drawGrid();
-    if(state.view==="dash") drawDash();
+
+    if(dailyCount===0 && weeklyCount===0 && siteCount===0 && scheduleCount===0){
+      showImportStatus("No recognisable log rows found in "+file.name+". Expecting 'Daily Log' / 'Weekly Log' / 'Zone Schedule' sheets from an export of this board.", "err");
+    } else {
+      const parts = [];
+      if(dailyCount) parts.push(dailyCount+" daily");
+      if(weeklyCount) parts.push(weeklyCount+" weekly");
+      if(siteCount) parts.push(siteCount+" site-status");
+      if(scheduleCount) parts.push(scheduleCount+" zone-schedule");
+      showImportStatus("Imported "+parts.join(", ")+" entries from "+file.name+(scheduleCount?" — schedule updated, check the Flowline tab.":"."), "ok");
+    }
+    renderAll();
   }catch(e){
     showImportStatus("Import failed: "+e.message, "err");
   }
