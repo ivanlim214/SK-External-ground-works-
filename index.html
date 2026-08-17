@@ -429,6 +429,19 @@ table.tcgrid td.status-delayed::after{
 .kpi .ksub{font-size:11px;color:var(--ink-soft);margin-top:4px;}
 .kpi.accent{border-color:rgba(227,106,46,.4);background:linear-gradient(180deg,#FFF7EF,var(--paper-raised));}
 .kpi.accent .kv{color:var(--accent-ink);}
+.kpi.warn{border-color:rgba(201,154,26,.45);}
+.kpi.warn .kv small{font-size:15px;color:#C99A1A;font-weight:700;}
+
+.cf-section-head{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:#8A6B2E;margin:2px 0 8px;padding-bottom:6px;border-bottom:1px dashed #D8C089;
+}
+.cf-card{background:#FFFBF3;}
+.cf-badge{
+  display:inline-block;font-family:var(--font-mono);font-size:9px;font-weight:700;
+  background:#F1EAD8;color:#8A6B2E;padding:2px 7px;border-radius:20px;margin-left:7px;vertical-align:middle;
+}
+.cf-reason{font-size:10.5px;color:var(--ink-faint);margin-top:3px;font-style:italic;}
 .tag-ok{display:inline-block;background:#E4F3E9;color:var(--line-good);font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:20px;margin-top:6px;}
 .tag-warn{display:inline-block;background:#FDEDE1;color:var(--accent-ink);font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:20px;margin-top:6px;}
 
@@ -730,6 +743,45 @@ table.varlog .rt{color:var(--accent-ink);font-family:var(--font-mono);font-size:
 }
 .sop-cascade b{color:#3D2F04;}
 
+/* ---- Playbook tab ------------------------------------------------------- */
+.pb-diagram-wrap{max-width:820px;margin:14px auto 4px;}
+.pb-diagram-wrap svg{width:100%;height:auto;display:block;}
+.pb-lede{font-size:13px;line-height:1.7;color:var(--ink-soft);margin:0 0 4px;}
+.pb-lede b{color:var(--ink);}
+
+.principle-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:12px;
+  margin-top:16px;
+}
+.principle-card{
+  background:var(--paper-raised);border:1px solid var(--paper-line);border-radius:var(--radius-m);
+  padding:15px 16px;box-shadow:var(--shadow-1);
+}
+.principle-card .pc-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;
+  font-family:var(--font-mono);font-size:11px;font-weight:700;margin-bottom:9px;
+}
+.principle-card h5{margin:0 0 5px;font-family:var(--font-display);font-size:15.5px;text-transform:uppercase;letter-spacing:.01em;color:var(--ink);}
+.principle-card p{margin:0;font-size:11.8px;line-height:1.6;color:var(--ink-soft);}
+
+.ppc-scale{margin-top:16px;}
+.ppc-scale-bar{height:30px;border-radius:6px;display:flex;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);}
+.ppc-scale-seg{flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;font-weight:700;color:#fff;}
+.ppc-scale-labels{display:flex;margin-top:6px;}
+.ppc-scale-labels span{flex:1;text-align:center;font-size:9.5px;color:var(--ink-faint);font-family:var(--font-mono);}
+.ppc-scale-note{font-size:10.5px;color:var(--ink-faint);margin-top:8px;line-height:1.5;}
+
+/* ---- Pareto chart (Daily Log) -------------------------------------------*/
+#dlPareto{width:100%;display:block;}
+#dlPareto svg{width:100%;height:auto;display:block;}
+.pareto-bar{cursor:pointer;}
+.pareto-bar rect{transition:opacity .1s;}
+.pareto-bar:hover rect{opacity:.82;}
+.pareto-pt{cursor:pointer;}
+
 footer.appfoot{
   text-align:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);
   padding:18px 20px 26px;
@@ -793,6 +845,7 @@ footer.appfoot{
         <button class="tab" data-view="daily">Daily Log</button>
         <button class="tab" data-view="grid">Time-Chainage Grid</button>
         <button class="tab" data-view="dash">Dashboard</button>
+        <button class="tab" data-view="playbook">Playbook</button>
         <button class="tab" data-view="sop">SOP</button>
       </nav>
 
@@ -909,7 +962,7 @@ footer.appfoot{
         <div class="panel-head">
           <div>
             <h2>Daily Log</h2>
-            <p>Field-level daily PPC — mark today's activities against plan, roll it up into a 30-day trend, and hand the status around the team as a colour-coded Excel file.</p>
+            <p>Field-level daily PPC — mark today's activities against plan, roll it up into a 30-day trend, and hand the status around the team as a colour-coded Excel file. Missed work carries forward automatically until it's actually done — the original day still keeps its miss for PPC, this is just so nothing gets forgotten.</p>
           </div>
           <div class="la-nav">
             <button class="mtbtn" id="dlPrev" title="Previous day">‹</button>
@@ -934,6 +987,12 @@ footer.appfoot{
           <div class="desc">Daily PPC trend — click a bar or a day to open it above.</div>
           <div id="dlPpcBars"></div>
           <div class="heat-strip" id="dlHeatmap"></div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h4>Reasons for Variance — Pareto</h4>
+          <div class="desc">Every missed activity, all-time, ranked by cause. The line is cumulative share — where it crosses 80% is your "vital few": fix those causes first, everything else is noise by comparison.</div>
+          <div id="dlPareto"></div>
         </div>
 
         <div class="card" style="margin-top:16px;">
@@ -987,6 +1046,201 @@ footer.appfoot{
             <h4>Contract Roll-Up</h4>
             <div class="desc">All packages, both disciplines.</div>
             <table class="contract-table" id="contractTable"></table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-playbook">
+        <div class="panel-head">
+          <div>
+            <h2>Playbook — Why PPC &amp; Takt Discipline Win Projects</h2>
+            <p>PPC and takt-rhythm monitoring aren't reporting overhead — they're the two instruments that tell you whether the production system is actually working. The theory behind them, and what separates teams who get the benefit from teams who just fill in the spreadsheet.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Why Track PPC</h4>
+          <p class="pb-lede">Percent Plan Complete isn't a productivity score — it's a <b>reliability</b> score. It only means something once you see it against the chain it comes from:</p>
+          <div class="pb-diagram-wrap">
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif">
+<defs>
+<marker id="pbArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+  <path d="M0,0 L10,5 L0,10 z" fill="#3A4256"/>
+</marker>
+</defs>
+<rect x="10.0" y="50" width="168" height="106" rx="10" fill="#16253C"/>
+<text x="94.0" y="77" text-anchor="middle" font-size="17" font-weight="800" fill="#fff" letter-spacing="1">SHOULD</text>
+<text x="94.0" y="94" text-anchor="middle" font-size="9.3" font-weight="700" fill="rgba(255,255,255,.92)">Master schedule</text>
+<text x="94.0" y="106" text-anchor="middle" font-size="9.3" font-weight="700" fill="rgba(255,255,255,.92)">/ takt plan</text>
+<text x="94.0" y="122" text-anchor="middle" font-size="8.3" fill="rgba(255,255,255,.72)">What the sequence says</text>
+<text x="94.0" y="133" text-anchor="middle" font-size="8.3" fill="rgba(255,255,255,.72)">needs to happen</text>
+<line x1="183.0" y1="103.0" x2="209.0" y2="103.0" stroke="#3A4256" stroke-width="2" marker-end="url(#pbArrow)"/>
+<rect x="214.0" y="50" width="168" height="106" rx="10" fill="#2158C4"/>
+<text x="298.0" y="77" text-anchor="middle" font-size="17" font-weight="800" fill="#fff" letter-spacing="1">CAN</text>
+<text x="298.0" y="94" text-anchor="middle" font-size="9.3" font-weight="700" fill="rgba(255,255,255,.92)">Constraints</text>
+<text x="298.0" y="106" text-anchor="middle" font-size="9.3" font-weight="700" fill="rgba(255,255,255,.92)">screened</text>
+<text x="298.0" y="122" text-anchor="middle" font-size="8.3" fill="rgba(255,255,255,.72)">Materials, info, space,</text>
+<text x="298.0" y="133" text-anchor="middle" font-size="8.3" fill="rgba(255,255,255,.72)">prerequisite work all clear</text>
+<line x1="387.0" y1="103.0" x2="413.0" y2="103.0" stroke="#3A4256" stroke-width="2" marker-end="url(#pbArrow)"/>
+<rect x="418.0" y="50" width="168" height="106" rx="10" fill="#E36A2E"/>
+<text x="502.0" y="77" text-anchor="middle" font-size="17" font-weight="800" fill="#fff" letter-spacing="1">WILL</text>
+<text x="502.0" y="94" text-anchor="middle" font-size="9.3" font-weight="700" fill="rgba(255,255,255,.92)">Committed</text>
+<text x="502.0" y="106" text-anchor="middle" font-size="9.3" font-weight="700" fill="rgba(255,255,255,.92)">(Weekly Work Plan)</text>
+<text x="502.0" y="122" text-anchor="middle" font-size="8.3" fill="rgba(255,255,255,.72)">The Last Planner promises</text>
+<text x="502.0" y="133" text-anchor="middle" font-size="8.3" fill="rgba(255,255,255,.72)">it for this week</text>
+<line x1="591.0" y1="103.0" x2="617.0" y2="103.0" stroke="#3A4256" stroke-width="2" marker-end="url(#pbArrow)"/>
+<rect x="622.0" y="50" width="168" height="106" rx="10" fill="#1E8E4E"/>
+<text x="706.0" y="77" text-anchor="middle" font-size="17" font-weight="800" fill="#fff" letter-spacing="1">DID</text>
+<text x="706.0" y="94" text-anchor="middle" font-size="9.3" font-weight="700" fill="rgba(255,255,255,.92)">Completed as</text>
+<text x="706.0" y="106" text-anchor="middle" font-size="9.3" font-weight="700" fill="rgba(255,255,255,.92)">promised</text>
+<text x="706.0" y="122" text-anchor="middle" font-size="8.3" fill="rgba(255,255,255,.72)">PPC counts this against</text>
+<text x="706.0" y="133" text-anchor="middle" font-size="8.3" fill="rgba(255,255,255,.72)">WILL, not SHOULD</text>
+<text x="10.0" y="186" font-size="10.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>PPC = DID ÷ WILL — not ÷ SHOULD. That is what makes it a measure of promise-keeping, not raw output.</text>
+</svg>
+          </div>
+          <ul class="sop-list" style="margin-top:14px;">
+            <li><b>PPC measures promise-keeping, not output.</b> A missed task usually means a broken commitment upstream — a constraint that was never actually cleared — not a slow crew. Blaming the trade for a planning failure is the single most common way to kill an LPS rollout.</li>
+            <li><b>It's a leading indicator.</b> PPC flags trouble at the week level, long before it shows up as a blown milestone on the master programme. By the time a CPM schedule shows red, the damage is already done; PPC catches it while it's still cheap to fix.</li>
+            <li><b>The real value is in the Reasons for Variance, not the percentage.</b> Every miss should carry a reason (see the Daily Log and 6-Week Look-Ahead tabs). Reasons that get counted and ranked — not just logged and forgotten — tell you exactly where the system is actually breaking.</li>
+            <li><b>Tracked over time, it shows whether your planning discipline is improving.</b> A single week's PPC is a data point; the trend line is the real measure of a maturing Last Planner System.</li>
+          </ul>
+          <div class="ppc-scale">
+            <div class="ppc-scale-bar">
+              <div class="ppc-scale-seg" style="background:#C62828;">&lt; 50%</div>
+              <div class="ppc-scale-seg" style="background:#C99A1A;">50 – 65%</div>
+              <div class="ppc-scale-seg" style="background:#2158C4;">65 – 80%</div>
+              <div class="ppc-scale-seg" style="background:#1E8E4E;">80%+</div>
+            </div>
+            <div class="ppc-scale-labels">
+              <span>Reactive</span><span>Developing</span><span>Reliable</span><span>Mature LPS</span>
+            </div>
+            <p class="ppc-scale-note">General reference ranges seen in Last Planner practice, not a fixed target — a team new to LPS often starts in the 30–50% band, and the goal is a rising trend, not an instant 80%.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h4>Why Monitor the Takt Plan</h4>
+          <p class="pb-lede">A takt plan turns the whole site into one synchronised production line — every trade knows exactly which zone it's in and when it hands off, like wagons on a train moving through stations on a fixed rhythm. That only holds if someone is watching the rhythm.</p>
+          <div class="pb-diagram-wrap">
+<svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif">
+<text x="20" y="16" font-size="12" font-weight="800" fill="#1E8E4E">HEALTHY RHYTHM</text>
+<text x="48" y="58.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z1</text>
+<text x="48" y="88.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z2</text>
+<text x="48" y="118.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z3</text>
+<text x="48" y="148.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z4</text>
+<text x="48" y="178.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z5</text>
+<rect x="54" y="40" width="326" height="150" fill="#FCFAF3" stroke="#E4DAC1"/>
+<line x1="54" y1="70" x2="380" y2="70" stroke="#EEE6D2" stroke-width="1"/>
+<line x1="54" y1="100" x2="380" y2="100" stroke="#EEE6D2" stroke-width="1"/>
+<line x1="54" y1="130" x2="380" y2="130" stroke="#EEE6D2" stroke-width="1"/>
+<line x1="54" y1="160" x2="380" y2="160" stroke="#EEE6D2" stroke-width="1"/>
+<rect x="62" y="46" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88"/>
+<rect x="108" y="46" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88"/>
+<rect x="154" y="46" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88"/>
+<rect x="200" y="46" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88"/>
+<rect x="88" y="76" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88"/>
+<rect x="134" y="76" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88"/>
+<rect x="180" y="76" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88"/>
+<rect x="226" y="76" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88"/>
+<rect x="114" y="106" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88"/>
+<rect x="160" y="106" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88"/>
+<rect x="206" y="106" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88"/>
+<rect x="252" y="106" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88"/>
+<rect x="140" y="136" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88"/>
+<rect x="186" y="136" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88"/>
+<rect x="232" y="136" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88"/>
+<rect x="278" y="136" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88"/>
+<rect x="166" y="166" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88"/>
+<rect x="212" y="166" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88"/>
+<rect x="258" y="166" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88"/>
+<rect x="304" y="166" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88"/>
+<text x="54" y="208" font-size="8.7" fill="#5B6270">Parallel, evenly-spaced bands — every trade hands off on rhythm.</text>
+<text x="420" y="16" font-size="12" font-weight="800" fill="#C62828">TAKT VIOLATION</text>
+<text x="448" y="58.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z1</text>
+<text x="448" y="88.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z2</text>
+<text x="448" y="118.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z3</text>
+<text x="448" y="148.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z4</text>
+<text x="448" y="178.0" text-anchor="end" font-size="8.5" fill="#8A8F9B" font-family='IBM Plex Mono,monospace'>Z5</text>
+<rect x="454" y="40" width="326" height="150" fill="#FCFAF3" stroke="#E4DAC1"/>
+<line x1="454" y1="70" x2="780" y2="70" stroke="#EEE6D2" stroke-width="1"/>
+<line x1="454" y1="100" x2="780" y2="100" stroke="#EEE6D2" stroke-width="1"/>
+<line x1="454" y1="130" x2="780" y2="130" stroke="#EEE6D2" stroke-width="1"/>
+<line x1="454" y1="160" x2="780" y2="160" stroke="#EEE6D2" stroke-width="1"/>
+<rect x="462" y="46" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88" stroke="none"/>
+<rect x="508" y="46" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88" stroke="none"/>
+<rect x="554" y="46" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88" stroke="none"/>
+<rect x="600" y="46" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88" stroke="none"/>
+<rect x="488" y="76" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88" stroke="none"/>
+<rect x="534" y="76" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88" stroke="none"/>
+<rect x="580" y="76" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88" stroke="none"/>
+<rect x="626" y="76" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88" stroke="none"/>
+<rect x="514" y="106" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88" stroke="none"/>
+<rect x="560" y="106" width="76" height="18" rx="3" fill="#2158C4" opacity="0.88" stroke="#7A0F0F" stroke-width="2"/>
+<rect x="606" y="106" width="76" height="18" rx="3" fill="#C99A1A" opacity="0.88" stroke="#7A0F0F" stroke-width="2"/>
+<rect x="652" y="106" width="76" height="18" rx="3" fill="#1E8E4E" opacity="0.88" stroke="#7A0F0F" stroke-width="2"/>
+<rect x="574" y="136" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88" stroke="none"/>
+<rect x="620" y="136" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88" stroke="none"/>
+<rect x="666" y="136" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88" stroke="none"/>
+<rect x="712" y="136" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88" stroke="none"/>
+<rect x="600" y="166" width="42" height="18" rx="3" fill="#8A8578" opacity="0.88" stroke="none"/>
+<rect x="646" y="166" width="42" height="18" rx="3" fill="#2158C4" opacity="0.88" stroke="none"/>
+<rect x="692" y="166" width="42" height="18" rx="3" fill="#C99A1A" opacity="0.88" stroke="none"/>
+<rect x="738" y="166" width="42" height="18" rx="3" fill="#1E8E4E" opacity="0.88" stroke="none"/>
+<circle cx="616" cy="130" r="5" fill="#C62828"/>
+<text x="625" y="133" font-size="8" fill="#C62828" font-weight="700">collision</text>
+<text x="454" y="208" font-size="8.7" fill="#5B6270">Zone 3 stalls — every trade behind it is forced out of sequence.</text>
+</svg>
+          </div>
+          <ul class="sop-list" style="margin-top:6px;">
+            <li><b>A late wagon doesn't stay local — it cascades.</b> A two-day slip in one zone pushes every trade behind it, in every zone after that, compounding as it travels down the line. This is exactly what the crossing lines on the Flowline tab are showing you when they appear.</li>
+            <li><b>The flowline is an early-warning instrument, not a record-keeping chart.</b> Parallel, evenly-spaced diagonal bands mean a stable rhythm. Converging, crossing, or gapped bands mean a rhythm break is already in progress — catchable now, instead of discovered at week twelve.</li>
+            <li><b>Watching work-in-progress keeps the site from sliding back into "start everywhere, finish nowhere."</b> That's the exact failure mode of trade-stacked, un-sequenced construction that takt planning exists to solve — limiting active zones to what the crews can actually hold a rhythm across.</li>
+            <li><b>Monitoring feeds the Look-Ahead, not the other way round.</b> Watching the plan is what tells you which constraints need clearing three, four, five weeks out — before the wagon arrives and finds the track still blocked.</li>
+          </ul>
+        </div>
+
+        <h3 class="sop-subhead">How to Be Successful Managing This Phase</h3>
+        <p class="sop-subhead-desc">Eight things that separate a Last Planner System that actually changes site behaviour from one that's just a compliance exercise.</p>
+        <div class="principle-grid">
+          <div class="principle-card">
+            <div class="pc-num">1</div>
+            <h5>Make the look-ahead do real work</h5>
+            <p>Screen every constraint — design info, materials, prerequisite work, space, crew, equipment — before a task is allowed into the Weekly Work Plan. A committed task should already be constraint-free, not a hope that it will be.</p>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">2</div>
+            <h5>Let the last planners plan</h5>
+            <p>Foremen and trade supervisors — not just the scheduler — should be the ones making the weekly commitments. They're the ones who can actually see the constraints on the ground.</p>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">3</div>
+            <h5>Review PPC together, without blame</h5>
+            <p>It's a team diagnostic, not a scorecard for punishing a trade. The moment it's used to assign blame, people start sandbagging commitments to protect their numbers — and the data stops being honest.</p>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">4</div>
+            <h5>Chase the reasons, not the percentage</h5>
+            <p>Rank the Reasons for Variance, find the recurring root cause, and assign an owner to fix the system issue behind it. A late-delivering supplier will cost you every single week until someone actually owns fixing it.</p>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">5</div>
+            <h5>Treat a stalled zone like a stopped line</h5>
+            <p>In Lean manufacturing a line stoppage gets escalated immediately. A late wagon deserves the same urgency — not a shrug and a hope it catches up next week, by which point it's cascaded into three more zones.</p>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">6</div>
+            <h5>Keep zones balanced</h5>
+            <p>Takt only holds together if the work content per zone is roughly even across trades. A badly unbalanced zone forces either idle crews or crashed work — either one breaks the rhythm for everyone behind it.</p>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">7</div>
+            <h5>Plan your buffers, don't discover them</h5>
+            <p>A deliberate time buffer or a flex crew, placed where the plan is thinnest, absorbs the normal variability of a live site. Finding out you needed one mid-crisis is the expensive way to learn this.</p>
+          </div>
+          <div class="principle-card">
+            <div class="pc-num">8</div>
+            <h5>Make the plan visible to everyone</h5>
+            <p>A flowline or takt board only works as a management tool if the whole team can read it — on a screen in the site office, not buried in a spreadsheet only the planner opens. That's what this board is for.</p>
           </div>
         </div>
       </section>
@@ -2715,6 +2969,28 @@ function dayPPC(date, log){
            ppc: (tasks.length && marked) ? Math.round(complete/tasks.length*100) : null };
 }
 
+// Work that was missed on an earlier day and hasn't been resolved yet — carried
+// forward for VISIBILITY only. This never touches dayPPC: the original day's
+// miss stays a miss forever (that's what makes PPC a reliability measure, not
+// just an output count). Resolving a carried-forward item marks it done "for
+// real-world tracking" via resolvedOn, without rewriting the original record.
+function getCarriedForwardTasks(date, log){
+  const todayScheduledIds = new Set(tasksOnDay(date).map(t=>t.id));
+  const out = [];
+  Object.keys(log).forEach(key=>{
+    const rec = log[key];
+    if(rec.status!=="incomplete" || rec.resolvedOn) return;
+    const at = key.lastIndexOf("@");
+    const taskId = key.slice(0,at), origDate = key.slice(at+1);
+    if(origDate>=date) return;
+    if(todayScheduledIds.has(taskId)) return; // already visible today for its own reason
+    const t = FLAT_TASKS.find(f=>f.id===taskId);
+    if(!t) return;
+    out.push({t, origDate, reason:rec.reason, daysLate: dayDiff(origDate,date)});
+  });
+  return out.sort((a,b)=> a.origDate<b.origDate?-1:a.origDate>b.origDate?1:0);
+}
+
 function drawDailyLog(){
   const log = loadDailyLog();
   const date = dlState.date;
@@ -2732,6 +3008,8 @@ function drawDailyLog(){
   Object.values(log).forEach(r=>{ if(r.status==="complete") allC++; else if(r.status==="incomplete") allM++; });
   const allMarked = allC+allM;
 
+  const carriedCount = getCarriedForwardTasks(date, log).length;
+
   document.getElementById("dlKpis").innerHTML = `
     <div class="kpi accent">
       <div class="kv">${stats.ppc===null?"—":stats.ppc+"%"}</div>
@@ -2748,10 +3026,10 @@ function drawDailyLog(){
       <div class="kl">All-Time Daily PPC</div>
       <div class="ksub">${allMarked} task-days reviewed</div>
     </div>
-    <div class="kpi">
-      <div class="kv">${stats.total}</div>
+    <div class="kpi${carriedCount?' warn':''}">
+      <div class="kv">${stats.total}${carriedCount?`<small> +${carriedCount}</small>`:""}</div>
       <div class="kl">Tasks On Site</div>
-      <div class="ksub">${sunday? "Non-working day" : "Scheduled today"}</div>
+      <div class="ksub">${sunday? "Non-working day" : carriedCount ? carriedCount+" carried forward" : "Scheduled today"}</div>
     </div>
   `;
 
@@ -2764,8 +3042,54 @@ function drawDailyLog(){
   const list = document.getElementById("dlTaskList");
   list.innerHTML = "";
   const tasks = tasksOnDay(date);
-  if(tasks.length===0){
+  const carried = getCarriedForwardTasks(date, log);
+
+  if(carried.length>0){
+    const cfHead = document.createElement("div");
+    cfHead.className = "cf-section-head";
+    cfHead.textContent = "Carried forward — still outstanding";
+    list.appendChild(cfHead);
+    carried.forEach(c=>{
+      const card = document.createElement("div");
+      card.className = "la-card cf-card";
+      card.style.borderLeftColor = "#C99A1A";
+      card.style.marginBottom = "7px";
+      card.innerHTML = `
+        <div class="lc-top">
+          <div>
+            <div class="lc-label">${c.t.label} <span class="cf-badge">⏪ due ${fmtShort(c.origDate)} · ${c.daysLate}d late</span></div>
+            <div class="lc-zone">${c.t.zone} <span class="lc-tag">· ${c.t.disciplineName} · ${c.t.package}</span></div>
+            ${c.reason ? `<div class="cf-reason">Logged reason: ${c.reason}</div>` : ""}
+          </div>
+        </div>
+      `;
+      const ctrl = document.createElement("div");
+      ctrl.className = "lc-controls";
+      const done = document.createElement("button");
+      done.className = "lc-btn on-yes";
+      done.textContent = "✓ Mark done now";
+      done.title = "Resolves the outstanding work without changing "+fmtShort(c.origDate)+"'s recorded PPC";
+      done.onclick = ()=>{
+        const l = loadDailyLog();
+        const key = dailyKey(c.t.id,c.origDate);
+        l[key] = {...l[key], resolvedOn:date};
+        saveDailyLog(l);
+        drawDailyLog();
+      };
+      ctrl.appendChild(done);
+      card.appendChild(ctrl);
+      list.appendChild(card);
+    });
+  }
+
+  if(tasks.length===0 && carried.length===0){
     list.innerHTML = `<div class="la-empty" style="padding:22px 4px;">No activity scheduled on this date.</div>`;
+  } else if(tasks.length===0){
+    const e = document.createElement("div");
+    e.className = "la-empty";
+    e.style.padding = "10px 4px";
+    e.textContent = "Nothing newly scheduled today — only carried-forward work above.";
+    list.appendChild(e);
   }
   tasks.forEach(t=>{
     const rec = log[dailyKey(t.id,date)] || {};
@@ -2790,7 +3114,7 @@ function drawDailyLog(){
     const no = document.createElement("button");
     no.className = "lc-btn on-no"+(rec.status==="incomplete"?" active":"");
     no.textContent = "✕ Missed";
-    no.onclick = ()=>{ const l=loadDailyLog(); const p=l[dailyKey(t.id,date)]||{}; l[dailyKey(t.id,date)]={status:"incomplete",reason:p.reason||RFV_REASONS[0]}; saveDailyLog(l); drawDailyLog(); };
+    no.onclick = ()=>{ const l=loadDailyLog(); const p=l[dailyKey(t.id,date)]||{}; l[dailyKey(t.id,date)]={status:"incomplete",reason:p.reason||RFV_REASONS[0], ...(p.resolvedOn?{resolvedOn:p.resolvedOn}:{})}; saveDailyLog(l); drawDailyLog(); };
     ctrl.appendChild(yes); ctrl.appendChild(no);
     card.appendChild(ctrl);
     if(rec.status==="incomplete"){
@@ -2802,7 +3126,7 @@ function drawDailyLog(){
         if((rec.reason||RFV_REASONS[0])===r) opt.selected=true;
         sel.appendChild(opt);
       });
-      sel.onchange = ()=>{ const l=loadDailyLog(); l[dailyKey(t.id,date)]={status:"incomplete",reason:sel.value}; saveDailyLog(l); drawDailyLog(); };
+      sel.onchange = ()=>{ const l=loadDailyLog(); const p=l[dailyKey(t.id,date)]||{}; l[dailyKey(t.id,date)]={status:"incomplete",reason:sel.value, ...(p.resolvedOn?{resolvedOn:p.resolvedOn}:{})}; saveDailyLog(l); drawDailyLog(); };
       card.appendChild(sel);
     }
     list.appendChild(card);
@@ -2853,6 +3177,100 @@ function drawDailyLog(){
     cell.textContent = toDate(d).getUTCDate();
     cell.onclick = ()=>{ dlState.date=d; drawDailyLog(); };
     heat.appendChild(cell);
+  });
+
+  drawVarianceParetoChart(log);
+}
+
+// Classic Pareto: bars (count) sorted descending + cumulative-% line on a
+// secondary axis, with the standard 80% reference line marking the "vital few".
+function drawVarianceParetoChart(dailyLogData){
+  const wrap = document.getElementById("dlPareto");
+  const counts = {};
+  RFV_REASONS.forEach(r=>counts[r]=0);
+  let totalMisses = 0;
+  Object.values(dailyLogData).forEach(r=>{
+    if(r.status==="incomplete"){
+      const reason = r.reason || "Other";
+      counts[reason] = (counts[reason]||0)+1;
+      totalMisses++;
+    }
+  });
+
+  if(totalMisses===0){
+    wrap.innerHTML = `<div class="la-empty" style="padding:26px 4px;">No misses logged yet — mark a task "✕ Missed" with a reason above to populate this chart.</div>`;
+    return;
+  }
+
+  const ranked = RFV_REASONS.slice().filter(r=>counts[r]>0).sort((a,b)=>counts[b]-counts[a]);
+  const n = ranked.length;
+  const maxCount = Math.max(...ranked.map(r=>counts[r]));
+  const niceMax = Math.ceil(maxCount/5)*5 || 1;
+
+  const W = 620, H = 340;
+  const ML=40, MR=44, MT=14, MB=128;
+  const plotW = W-ML-MR, plotH = H-MT-MB;
+  const slot = plotW/n;
+  const barW = Math.min(slot*0.56, 46);
+
+  let cum = 0;
+  const points = [];
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="'IBM Plex Sans',sans-serif" style="width:100%;height:auto;display:block;">`;
+
+  // gridlines + left (count) axis ticks
+  const ticks = 5;
+  for(let i=0;i<=ticks;i++){
+    const v = niceMax*i/ticks;
+    const y = MT+plotH-(v/niceMax)*plotH;
+    svg += `<line x1="${ML}" y1="${y.toFixed(1)}" x2="${ML+plotW}" y2="${y.toFixed(1)}" stroke="#EEE6D2" stroke-width="1"/>`;
+    svg += `<text x="${ML-6}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="9" fill="#8A8F9B" font-family="'IBM Plex Mono',monospace">${Math.round(v)}</text>`;
+  }
+  // right (%) axis ticks
+  [0,20,40,60,100].forEach(p=>{
+    const y = MT+plotH-(p/100)*plotH;
+    svg += `<text x="${ML+plotW+8}" y="${(y+3).toFixed(1)}" text-anchor="start" font-size="9" fill="#8A8F9B" font-family="'IBM Plex Mono',monospace">${p}%</text>`;
+  });
+  // 80% reference line
+  const y80 = MT+plotH-0.8*plotH;
+  svg += `<line x1="${ML}" y1="${y80.toFixed(1)}" x2="${ML+plotW}" y2="${y80.toFixed(1)}" stroke="#C99A1A" stroke-width="1.2" stroke-dasharray="4,3"/>`;
+  svg += `<text x="${ML+plotW+8}" y="${(y80-4).toFixed(1)}" font-size="8" fill="#C99A1A" font-weight="700" font-family="'IBM Plex Mono',monospace">80%</text>`;
+
+  // bars + x labels
+  ranked.forEach((reason,i)=>{
+    const c = counts[reason];
+    cum += c;
+    const cumPct = cum/totalMisses*100;
+    const cx = ML + slot*i + slot/2;
+    const bh = (c/niceMax)*plotH;
+    const bx = cx-barW/2, by = MT+plotH-bh;
+    const isVital = (cumPct - (c/totalMisses*100)) < 80; // this bar is part of the "vital few" up to the 80% line
+    svg += `<g class="pareto-bar" data-reason="${i}">`;
+    svg += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${barW.toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${isVital?'#E36A2E':'#D8CDA8'}"/>`;
+    svg += `<text x="${cx.toFixed(1)}" y="${(by-6).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="#1B2028">${c}</text>`;
+    svg += `</g>`;
+    // rotated x-axis label
+    const label = reason.length>26 ? reason.slice(0,25)+"…" : reason;
+    svg += `<text x="${cx.toFixed(1)}" y="${(MT+plotH+12).toFixed(1)}" text-anchor="end" font-size="9" fill="#5B6270" transform="rotate(-40 ${cx.toFixed(1)} ${(MT+plotH+12).toFixed(1)})">${label.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</text>`;
+    points.push({x:cx, y:MT+plotH-(cumPct/100)*plotH, reason, count:c, cumPct});
+  });
+
+  // cumulative line
+  let pathD = "M "+points.map(p=>p.x.toFixed(1)+" "+p.y.toFixed(1)).join(" L ");
+  svg += `<path d="${pathD}" fill="none" stroke="#16253C" stroke-width="1.8"/>`;
+  points.forEach((p,i)=>{
+    svg += `<circle class="pareto-pt" data-reason="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.2" fill="#16253C" stroke="#fff" stroke-width="1.2"/>`;
+  });
+
+  svg += `</svg>`;
+  wrap.innerHTML = svg;
+
+  wrap.querySelectorAll(".pareto-bar, .pareto-pt").forEach(el=>{
+    const p = points[+el.getAttribute("data-reason")];
+    el.addEventListener("mouseenter",(e)=>{
+      showTip(e, `<b>${p.reason}</b>${p.count} miss${p.count===1?"":"es"} (${Math.round(p.count/totalMisses*100)}% of all)<div class="tip-dates">Cumulative: ${Math.round(p.cumPct)}%</div>`);
+    });
+    el.addEventListener("mousemove", moveTip);
+    el.addEventListener("mouseleave", hideTip);
   });
 }
 
@@ -3284,6 +3702,60 @@ function readFileAsArrayBuffer(file){
   });
 }
 
+// Finds a column by its header text (row 1), so import doesn't break if columns
+// get reordered between app versions. Matches case-insensitively, from the start
+// of the header (so "New Start Date (edit this)" matches "New Start Date").
+function colByHeader(sheet, headerText){
+  const wanted = headerText.toLowerCase();
+  const row1 = sheet.getRow(1);
+  for(let c=1;c<=row1.cellCount;c++){
+    const v = (row1.getCell(c).value||"").toString().trim().toLowerCase();
+    if(v.startsWith(wanted)) return c;
+  }
+  return null;
+}
+
+const MONTH_NAMES = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+// Accepts a Date object or a wide range of typed-in-Excel-as-text date formats and
+// returns an ISO "YYYY-MM-DD" string, or null if nothing could be understood.
+function parseAnyDate(value){
+  if(value instanceof Date && !isNaN(value)){
+    return value.toISOString().slice(0,10);
+  }
+  if(typeof value !== "string") return null;
+  const s = value.trim();
+  if(!s) return null;
+
+  // ISO: 2026-08-11
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return isoFromParts(+m[1], +m[2], +m[3]);
+
+  // 11-Aug-2026 or 11 Aug 2026 (matches this sheet's own numFmt)
+  m = s.match(/^(\d{1,2})[\s-]([A-Za-z]{3,})[\s-](\d{4})/);
+  if(m){
+    const mi = MONTH_NAMES.indexOf(m[2].slice(0,3).toLowerCase());
+    if(mi>=0) return isoFromParts(+m[3], mi+1, +m[1]);
+  }
+
+  // 11/08/2026 or 11-08-2026 — day-first, matches typical non-US entry
+  m = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if(m){
+    const a=+m[1], b=+m[2], y=+m[3];
+    if(a>12 && b<=12) return isoFromParts(y,b,a);       // must be D/M
+    if(b>12 && a<=12) return isoFromParts(y,a,b);       // must be M/D
+    return isoFromParts(y,b,a);                          // ambiguous: assume day-first
+  }
+
+  // last resort: let the browser try
+  const d = new Date(s);
+  if(!isNaN(d)) return d.toISOString().slice(0,10);
+  return null;
+}
+function isoFromParts(y,mo,d){
+  if(mo<1||mo>12||d<1||d>31) return null;
+  return y+"-"+String(mo).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+}
+
 async function importExcel(file){
   showImportStatus("Reading "+file.name+"…", "busy");
   try{
@@ -3299,25 +3771,30 @@ async function importExcel(file){
       const siteLog = loadTaskStatus();
       const siteLabelToKey = {};
       STATUS_DEFS.forEach(s=>{ siteLabelToKey[s.label.toLowerCase()] = s.key; });
+      const cId = colByHeader(dsh,"task id") || 1;
+      const cDate = colByHeader(dsh,"date") || 2;
+      const cStatus = colByHeader(dsh,"status") || 9;
+      const cReason = colByHeader(dsh,"reason") || 10;
+      const cSite = colByHeader(dsh,"site status") || 11;
       dsh.eachRow({includeEmpty:false},(row,rowNum)=>{
         if(rowNum===1) return;
-        const id = row.getCell(1).value;
-        const date = row.getCell(2).value;
-        if(!id || !date) return;
-        const dISO = (date instanceof Date) ? date.toISOString().slice(0,10) : String(date).slice(0,10);
+        const id = row.getCell(cId).value;
+        const dISO = parseAnyDate(row.getCell(cDate).value);
+        if(!id || !dISO) return;
         const cellKey = dailyKey(id,dISO);
 
-        const statusTxt = (row.getCell(9).value||"").toString().trim();
-        const reasonTxt = (row.getCell(10).value||"").toString().trim();
+        const statusTxt = (row.getCell(cStatus).value||"").toString().trim();
+        const reasonTxt = (row.getCell(cReason).value||"").toString().trim();
         if(statusTxt){
           const status = /complete/i.test(statusTxt) ? "complete" : /miss/i.test(statusTxt) ? "incomplete" : null;
           if(status){
-            dailyLog[cellKey] = status==="incomplete" ? {status, reason: reasonTxt||RFV_REASONS[0]} : {status};
+            const prevResolved = dailyLog[cellKey] && dailyLog[cellKey].resolvedOn;
+            dailyLog[cellKey] = status==="incomplete" ? {status, reason: reasonTxt||RFV_REASONS[0], ...(prevResolved?{resolvedOn:prevResolved}:{})} : {status};
             dailyCount++;
           }
         }
 
-        const siteTxt = (row.getCell(11).value||"").toString().trim().toLowerCase();
+        const siteTxt = (row.getCell(cSite).value||"").toString().trim().toLowerCase();
         if(siteTxt && siteLabelToKey[siteTxt]){
           siteLog[cellKey] = siteLabelToKey[siteTxt];
           siteCount++;
@@ -3330,14 +3807,17 @@ async function importExcel(file){
     const wsh = wb.getWorksheet("Weekly Log");
     if(wsh){
       const weeklyLog = loadLog();
+      const cId = colByHeader(wsh,"task id") || 1;
+      const cWs = colByHeader(wsh,"week start") || 2;
+      const cStatus = colByHeader(wsh,"status") || 9;
+      const cReason = colByHeader(wsh,"reason") || 10;
       wsh.eachRow({includeEmpty:false},(row,rowNum)=>{
         if(rowNum===1) return;
-        const id = row.getCell(1).value;
-        const weekStartRaw = row.getCell(2).value;
-        const statusTxt = (row.getCell(9).value||"").toString().trim();
-        const reasonTxt = (row.getCell(10).value||"").toString().trim();
-        if(!id || !weekStartRaw || !statusTxt) return;
-        const wISO = (weekStartRaw instanceof Date) ? weekStartRaw.toISOString().slice(0,10) : String(weekStartRaw).slice(0,10);
+        const id = row.getCell(cId).value;
+        const wISO = parseAnyDate(row.getCell(cWs).value);
+        const statusTxt = (row.getCell(cStatus).value||"").toString().trim();
+        const reasonTxt = (row.getCell(cReason).value||"").toString().trim();
+        if(!id || !wISO || !statusTxt) return;
         let status = null;
         if(/^complete/i.test(statusTxt)) status="complete";
         else if(/^miss/i.test(statusTxt)) status="incomplete";
@@ -3351,21 +3831,27 @@ async function importExcel(file){
     }
 
     const zsh = wb.getWorksheet("Zone Schedule");
-    let scheduleCount = 0;
+    let scheduleCount = 0, scheduleSkipped = 0;
+    const scheduleChanges = [];
     if(zsh){
       const overrides = loadScheduleOverrides();
+      const cDisc = colByHeader(zsh,"discipline") || 1;
+      const cPkg = colByHeader(zsh,"package") || 2;
+      const cZone = colByHeader(zsh,"zone") || 3;
+      const cNewStart = colByHeader(zsh,"new start date");
       zsh.eachRow({includeEmpty:false},(row,rowNum)=>{
-        if(rowNum===1) return;
-        const discName = (row.getCell(1).value||"").toString().trim();
-        const pkg = (row.getCell(2).value||"").toString().trim();
-        const zone = (row.getCell(3).value||"").toString().trim();
-        const newStartRaw = row.getCell(8).value;
+        if(rowNum===1 || !cNewStart) return;
+        const discName = (row.getCell(cDisc).value||"").toString().trim();
+        const pkg = (row.getCell(cPkg).value||"").toString().trim();
+        const zone = (row.getCell(cZone).value||"").toString().trim();
+        const newStartRaw = row.getCell(cNewStart).value;
         if(!discName || !pkg || !zone || !newStartRaw) return;
         const discObj = DISCIPLINES.find(d=>d.name===discName);
         if(!discObj) return;
-        const nsISO = (newStartRaw instanceof Date) ? newStartRaw.toISOString().slice(0,10) : String(newStartRaw).slice(0,10);
-        if(!/^\d{4}-\d{2}-\d{2}$/.test(nsISO)) return;
+        const nsISO = parseAnyDate(newStartRaw);
+        if(!nsISO){ scheduleSkipped++; return; }
         overrides[zoneOverrideKey(discObj.key,pkg,zone)] = {0:{start:nsISO}};
+        scheduleChanges.push(zone+" → "+fmtShort(nsISO));
         scheduleCount++;
       });
       if(scheduleCount>0){
@@ -3375,14 +3861,17 @@ async function importExcel(file){
     }
 
     if(dailyCount===0 && weeklyCount===0 && siteCount===0 && scheduleCount===0){
-      showImportStatus("No recognisable log rows found in "+file.name+". Expecting 'Daily Log' / 'Weekly Log' / 'Zone Schedule' sheets from an export of this board.", "err");
+      const skipNote = scheduleSkipped ? " Found "+scheduleSkipped+" Zone Schedule row(s) with a New Start Date value that couldn't be read as a date — check it's a real date, not text in an unusual format." : "";
+      showImportStatus("No recognisable log rows found in "+file.name+"."+skipNote+" Expecting 'Daily Log' / 'Weekly Log' / 'Zone Schedule' sheets from an export of this board.", "err");
     } else {
       const parts = [];
       if(dailyCount) parts.push(dailyCount+" daily");
       if(weeklyCount) parts.push(weeklyCount+" weekly");
       if(siteCount) parts.push(siteCount+" site-status");
       if(scheduleCount) parts.push(scheduleCount+" zone-schedule");
-      showImportStatus("Imported "+parts.join(", ")+" entries from "+file.name+(scheduleCount?" — schedule updated, check the Flowline tab.":"."), "ok");
+      const skipNote = scheduleSkipped ? " ("+scheduleSkipped+" Zone Schedule row(s) had a New Start Date that couldn't be read as a date and were skipped.)" : "";
+      const changeNote = scheduleChanges.length ? " Moved: "+scheduleChanges.join("; ")+"." : "";
+      showImportStatus("Imported "+parts.join(", ")+" entries from "+file.name+(scheduleCount?" — schedule updated, check the Flowline tab.":".")+changeNote+skipNote, scheduleSkipped?"err":"ok");
     }
     renderAll();
   }catch(e){
