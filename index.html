@@ -284,18 +284,33 @@ main.stage{
 #flowSvgWrap{position:relative;}
 .flow-row{display:flex;align-items:stretch;}
 .flow-labels{
-  flex:none;width:172px;border-right:1px solid var(--paper-line);
+  flex:none;width:196px;border-right:1px solid var(--paper-line);
   background:var(--paper-raised);position:relative;z-index:3;
 }
 .flow-labels .fl-head{
-  height:56px;display:flex;align-items:flex-end;padding:0 14px 8px;
+  height:56px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 10px 8px 14px;
   font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--ink-faint);border-bottom:1px solid var(--paper-line);
+  color:var(--ink-faint);border-bottom:1px solid var(--paper-line);gap:6px;
 }
+.fl-reset-order{
+  font-family:var(--font-mono);font-size:9px;letter-spacing:0;text-transform:none;
+  background:none;border:1px solid var(--paper-line);border-radius:12px;
+  color:var(--accent-ink);padding:2px 8px;cursor:pointer;white-space:nowrap;
+}
+.fl-reset-order:hover{background:#FDEDE1;}
 .flow-labels .fl-zone{
-  display:flex;flex-direction:column;justify-content:center;padding:0 14px;
+  display:flex;align-items:center;gap:8px;padding:0 10px 0 8px;
   border-bottom:1px dashed var(--paper-line-soft);
 }
+.fl-reorder{display:flex;flex-direction:column;gap:1px;flex:none;}
+.fl-reorder-btn{
+  width:18px;height:15px;padding:0;border:1px solid var(--paper-line);border-radius:3px;
+  background:#fff;color:var(--ink-soft);font-size:8px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.fl-reorder-btn:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:#fff;}
+.fl-reorder-btn:disabled{opacity:.25;cursor:default;}
+.fl-zone-info{flex:1;min-width:0;padding:10px 0;cursor:pointer;display:flex;flex-direction:column;justify-content:center;}
 .flow-labels .fl-zone .fz-name{font-weight:700;font-size:13px;color:var(--ink);}
 .flow-labels .fl-zone .fz-sub{font-family:var(--font-mono);font-size:9.5px;color:var(--ink-faint);margin-top:1px;}
 .svg-tip{
@@ -404,7 +419,6 @@ table.tcgrid td.status-delayed::after{
 .sched-reset{color:var(--accent-2);}
 .sched-cancel{color:var(--chrome-text-dim);}
 
-.fl-zone{cursor:pointer;}
 .fl-zone:hover{background:rgba(227,106,46,.06);}
 .zonebar-row{cursor:pointer;border-radius:6px;transition:background .1s;}
 .zonebar-row:hover{background:rgba(227,106,46,.06);}
@@ -567,24 +581,28 @@ table.tcgrid td.status-delayed::after{
 #tlDensity{width:100%;display:block;}
 .tl-slider{
   -webkit-appearance:none;appearance:none;
-  width:100%;height:6px;border-radius:4px;
+  width:100%;height:8px;border-radius:5px;
   background:var(--paper-line-soft);
-  margin:6px 0 4px;
+  margin:10px 0 4px;
   cursor:pointer;
+  touch-action:none;
 }
 .tl-slider::-webkit-slider-thumb{
   -webkit-appearance:none;appearance:none;
-  width:16px;height:16px;border-radius:50%;
-  background:var(--accent);border:2px solid #fff;
-  box-shadow:0 1px 4px rgba(0,0,0,.35);
-  cursor:grab;margin-top:-5px;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--accent);border:2.5px solid #fff;
+  box-shadow:0 1px 5px rgba(0,0,0,.4);
+  cursor:grab;margin-top:-6px;
 }
+.tl-slider::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.15);}
 .tl-slider::-moz-range-thumb{
-  width:16px;height:16px;border-radius:50%;
-  background:var(--accent);border:2px solid #fff;
-  box-shadow:0 1px 4px rgba(0,0,0,.35);cursor:grab;border:none;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--accent);border:2.5px solid #fff;
+  box-shadow:0 1px 5px rgba(0,0,0,.4);cursor:grab;border:none;
 }
-.tl-slider::-webkit-slider-runnable-track{height:6px;border-radius:4px;}
+.tl-slider::-moz-range-thumb:active{cursor:grabbing;transform:scale(1.15);}
+.tl-slider::-webkit-slider-runnable-track{height:8px;border-radius:5px;}
+.tl-slider::-moz-range-track{height:8px;border-radius:5px;background:var(--paper-line-soft);}
 .tl-range-labels{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);}
 
 /* ---- 6-Week Look-Ahead ------------------------------------------------- */
@@ -654,6 +672,18 @@ table.tcgrid td.status-delayed::after{
 .rfv-track{flex:1;height:12px;background:var(--paper-line-soft);border-radius:4px;overflow:hidden;}
 .rfv-fill{height:100%;background:linear-gradient(90deg,#C62828,#E36A2E);border-radius:4px;}
 .rfv-row .rf-val{width:24px;flex:none;font-family:var(--font-mono);font-size:10.5px;text-align:right;}
+#dlPpcReasons{margin-top:14px;padding-top:12px;border-top:1px solid var(--paper-line);}
+#dlPpcReasons .dlpr-head{
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:9px;
+}
+
+.pareto-tl{margin:14px 0 18px;padding-bottom:14px;border-bottom:1px solid var(--paper-line);}
+.pareto-tl-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+.pareto-tl-window{font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--ink);}
+.pareto-tl-window small{font-family:var(--font-mono);font-weight:400;font-size:11px;color:var(--ink-faint);}
+#prDensity{width:100%;display:block;}
+#prPlay.playing{background:var(--accent);border-color:var(--accent);color:#fff;}
 
 table.varlog{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px;}
 table.varlog th{text-align:left;font-family:var(--font-mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);padding:6px 8px;border-bottom:1px solid var(--paper-line);}
@@ -853,7 +883,7 @@ footer.appfoot{
         <div class="panel-head">
           <div>
             <h2 id="flowTitle">Flowline</h2>
-            <p>Location (zone) on the vertical axis, calendar time on the horizontal axis. Diagonal bands trace each trade's takt rhythm as it hands off from wagon to wagon; slope shows production rate, parallel bands show a stable takt. Click a zone's name on the left to move its start date.</p>
+            <p>Location (zone) on the vertical axis, calendar time on the horizontal axis. Diagonal bands trace each trade's takt rhythm as it hands off from wagon to wagon; slope shows production rate, parallel bands show a stable takt. Click a zone's name to move its start date, or use the ▲▼ buttons to reorder the rows.</p>
           </div>
         </div>
         <div class="chart-card">
@@ -986,12 +1016,27 @@ footer.appfoot{
           <h4>Last 30 Days</h4>
           <div class="desc">Daily PPC trend — click a bar or a day to open it above.</div>
           <div id="dlPpcBars"></div>
+          <div id="dlPpcReasons"></div>
           <div class="heat-strip" id="dlHeatmap"></div>
         </div>
 
         <div class="card" style="margin-top:16px;">
           <h4>Reasons for Variance — Pareto</h4>
-          <div class="desc">Every missed activity, all-time, ranked by cause. The line is cumulative share — where it crosses 80% is your "vital few": fix those causes first, everything else is noise by comparison.</div>
+          <div class="desc">Every missed activity in the window below, ranked by cause — the line is cumulative share, and where it crosses 80% is your "vital few". Drag the timeline to see the ranking as of any point in the project; root causes shift over a job, and a single all-time chart hides that.</div>
+          <div class="pareto-tl">
+            <div class="pareto-tl-top">
+              <div class="pareto-tl-window" id="prWindowLabel">—</div>
+              <div class="tl-controls">
+                <button class="mtbtn" id="prPrev" title="Back one day">‹</button>
+                <button class="mtbtn" id="prPlay" title="Play">▶</button>
+                <button class="mtbtn" id="prNext" title="Forward one day">›</button>
+                <button class="mtbtn" id="prLatest" style="width:auto;padding:0 12px;font-size:10.5px;">Latest</button>
+              </div>
+            </div>
+            <div id="prDensity"></div>
+            <input type="range" id="prSlider" class="tl-slider" min="0" max="0" value="0" step="1">
+            <div class="tl-range-labels"><span id="prRangeStart"></span><span id="prRangeEnd"></span></div>
+          </div>
           <div id="dlPareto"></div>
         </div>
 
@@ -1606,7 +1651,42 @@ function reloadSchedule(){
 /* ---------------------------------------------------------------------
    DATA ACCESSORS
 --------------------------------------------------------------------- */
-function zonesOf(disc,pkg){ return Object.entries(DATA[disc][pkg]); } // [ [zoneName, segs[]], ... ]
+const ZONE_ORDER_KEY = "skn4c49_zone_order_v1";
+function loadZoneOrder(){ try{ return JSON.parse(localStorage.getItem(ZONE_ORDER_KEY)) || {}; }catch(e){ return {}; } }
+function saveZoneOrder(o){ try{ localStorage.setItem(ZONE_ORDER_KEY, JSON.stringify(o)); }catch(e){} }
+function zoneOrderKey(disc,pkg){ return disc+"|"+pkg; }
+
+function zonesOf(disc,pkg){
+  const natural = Object.entries(DATA[disc][pkg]); // [ [zoneName, segs[]], ... ]
+  const saved = loadZoneOrder()[zoneOrderKey(disc,pkg)];
+  if(!saved) return natural;
+  const map = new Map(natural);
+  const ordered = [];
+  saved.forEach(name=>{ if(map.has(name)){ ordered.push([name, map.get(name)]); map.delete(name); } });
+  map.forEach((segs,name)=>ordered.push([name,segs])); // any new/unlisted zones appended at the end
+  return ordered;
+}
+
+function moveZone(disc, pkg, zoneName, direction){ // direction: -1 up, +1 down
+  const current = zonesOf(disc,pkg).map(([name])=>name);
+  const idx = current.indexOf(zoneName);
+  const newIdx = idx+direction;
+  if(idx<0 || newIdx<0 || newIdx>=current.length) return;
+  [current[idx], current[newIdx]] = [current[newIdx], current[idx]];
+  const overrides = loadZoneOrder();
+  overrides[zoneOrderKey(disc,pkg)] = current;
+  saveZoneOrder(overrides);
+  rebuildFlatTasks();
+  renderAll();
+}
+
+function resetZoneOrder(disc, pkg){
+  const overrides = loadZoneOrder();
+  delete overrides[zoneOrderKey(disc,pkg)];
+  saveZoneOrder(overrides);
+  rebuildFlatTasks();
+  renderAll();
+}
 function packagesOf(disc){ return Object.keys(DATA[disc]); }
 
 function packageRange(disc,pkg){
@@ -1762,18 +1842,40 @@ function drawFlow(){
   labelsWrap.innerHTML = "";
   const flHead = document.createElement("div");
   flHead.className = "fl-head";
-  flHead.textContent = "Zone / Wagon";
+  const hasCustomOrder = !!loadZoneOrder()[zoneOrderKey(state.discipline,state.package)];
+  flHead.innerHTML = `<span>Zone / Wagon</span>` + (hasCustomOrder ? `<button class="fl-reset-order" title="Reset to original zone order">↺ reset order</button>` : "");
   labelsWrap.appendChild(flHead);
-  zones.forEach(([name,segs])=>{
+  if(hasCustomOrder){
+    flHead.querySelector(".fl-reset-order").addEventListener("click",(e)=>{
+      e.stopPropagation();
+      resetZoneOrder(state.discipline, state.package);
+    });
+  }
+  zones.forEach(([name,segs],zi)=>{
     const div = document.createElement("div");
     div.className = "fl-zone";
     div.style.height = BAND_H+"px";
     const durTxt = dayDiff(segs[0].start, segs[segs.length-1].end)+1;
-    div.innerHTML = `<span class="fz-name">${name}</span><span class="fz-sub">${segs.length} activities · ${durTxt}d</span>`;
-    div.title = "Click to move this zone's start date";
-    div.addEventListener("click",(e)=>{
+    div.innerHTML = `
+      <div class="fl-reorder">
+        <button class="fl-reorder-btn fl-up" title="Move this zone up" ${zi===0?"disabled":""}>▲</button>
+        <button class="fl-reorder-btn fl-down" title="Move this zone down" ${zi===zones.length-1?"disabled":""}>▼</button>
+      </div>
+      <div class="fl-zone-info" title="Click to move this zone's start date">
+        <span class="fz-name">${name}</span><span class="fz-sub">${segs.length} activities · ${durTxt}d</span>
+      </div>
+    `;
+    div.querySelector(".fl-zone-info").addEventListener("click",(e)=>{
       e.stopPropagation();
       openScheduleEditPopover(e, state.discipline, state.package, name);
+    });
+    div.querySelector(".fl-up").addEventListener("click",(e)=>{
+      e.stopPropagation();
+      moveZone(state.discipline, state.package, name, -1);
+    });
+    div.querySelector(".fl-down").addEventListener("click",(e)=>{
+      e.stopPropagation();
+      moveZone(state.discipline, state.package, name, 1);
     });
     labelsWrap.appendChild(div);
   });
@@ -3166,6 +3268,33 @@ function drawDailyLog(){
     g.addEventListener("click", ()=>{ dlState.date=d; drawDailyLog(); });
   });
 
+  // reasons breakdown, scoped to the same 30-day window as the bars above
+  const reasonsWrap = document.getElementById("dlPpcReasons");
+  const windowSet = new Set(days30);
+  const winCounts = {};
+  RFV_REASONS.forEach(r=>winCounts[r]=0);
+  let winMisses = 0;
+  Object.keys(log).forEach(key=>{
+    const rec = log[key];
+    if(rec.status!=="incomplete") return;
+    const d = key.slice(key.lastIndexOf("@")+1);
+    if(!windowSet.has(d)) return;
+    const reason = rec.reason || "Other";
+    winCounts[reason] = (winCounts[reason]||0)+1;
+    winMisses++;
+  });
+  if(winMisses===0){
+    reasonsWrap.innerHTML = "";
+  } else {
+    const ranked = RFV_REASONS.slice().filter(r=>winCounts[r]>0).sort((a,b)=>winCounts[b]-winCounts[a]);
+    const maxC = Math.max(...ranked.map(r=>winCounts[r]));
+    let rhtml = `<div class="dlpr-head">Reasons for misses — last 30 days (${winMisses} logged)</div>`;
+    ranked.forEach(r=>{
+      rhtml += `<div class="rfv-row"><div class="rf-label">${r}</div><div class="rfv-track"><div class="rfv-fill" style="width:${(winCounts[r]/maxC*100).toFixed(1)}%"></div></div><div class="rf-val">${winCounts[r]}</div></div>`;
+    });
+    reasonsWrap.innerHTML = rhtml;
+  }
+
   const heat = document.getElementById("dlHeatmap");
   heat.innerHTML = "";
   stats30.forEach(s=>{
@@ -3179,26 +3308,179 @@ function drawDailyLog(){
     heat.appendChild(cell);
   });
 
-  drawVarianceParetoChart(log);
+  setupParetoTimeline(log);
+}
+
+/* ---------------------------------------------------------------------
+   PARETO TIMELINE — drag through the project to see reasons ranking shift
+--------------------------------------------------------------------- */
+const PARETO_WINDOW_DAYS = 7;
+const paretoState = { asOf: null, playing:false, timer:null, _userMoved:false };
+
+function allMissDates(log){
+  // one entry per missed task-day (duplicates kept) so density counts are accurate, not just "any miss that day"
+  const dates = [];
+  Object.keys(log).forEach(key=>{
+    if(log[key].status==="incomplete") dates.push(key.slice(key.lastIndexOf("@")+1));
+  });
+  return dates.sort();
+}
+
+// The whole issued programme's span, not just the days someone happened to log a
+// miss on — so dragging the timeline back reaches the real project start, even
+// before any tracking began, rather than stopping at the first logged miss.
+function projectDateRange(){
+  let min=null, max=null;
+  FLAT_TASKS.forEach(t=>{
+    if(min===null||t.start<min) min=t.start;
+    if(max===null||t.end>max) max=t.end;
+  });
+  return {min, max};
+}
+
+function setupParetoTimeline(log){
+  const missDates = allMissDates(log);
+  const slider = document.getElementById("prSlider");
+  const proj = projectDateRange();
+  const rangeMin = proj.min;
+  const lastMiss = missDates.length ? missDates[missDates.length-1] : null;
+  const rangeMax = (lastMiss && lastMiss>TODAY) ? lastMiss : TODAY;
+  const totalDays = dayDiff(rangeMin, rangeMax)+1;
+  slider.min = 0; slider.max = Math.max(totalDays-1,0);
+
+  if(!paretoState.asOf || paretoState._userMoved!==true){
+    paretoState.asOf = rangeMax; // default: today (or latest logged miss if somehow later)
+  }
+  if(paretoState.asOf<rangeMin) paretoState.asOf = rangeMin;
+  if(paretoState.asOf>rangeMax) paretoState.asOf = rangeMax;
+  slider.value = dayDiff(rangeMin, paretoState.asOf);
+
+  document.getElementById("prRangeStart").textContent = fmtShort(rangeMin);
+  document.getElementById("prRangeEnd").textContent = fmtShort(rangeMax);
+
+  // density histogram: actual miss count per day across the full project range
+  const missCountByDate = {};
+  missDates.forEach(d=>{ missCountByDate[d] = (missCountByDate[d]||0)+1; });
+  const counts = [];
+  for(let i=0;i<totalDays;i++){
+    const d = addDays(rangeMin,i).toISOString().slice(0,10);
+    counts.push(missCountByDate[d]||0);
+  }
+  const maxC = Math.max(1,...counts);
+  const w=100, h=30, barW=w/counts.length;
+  let bars = "";
+  counts.forEach((c,i)=>{
+    const bh = (c/maxC)*(h-3);
+    bars += `<rect x="${(i*barW).toFixed(2)}" y="${(h-bh).toFixed(2)}" width="${Math.max(barW-0.15,0.2).toFixed(2)}" height="${bh.toFixed(2)}" fill="#E3B98F"></rect>`;
+  });
+  document.getElementById("prDensity").innerHTML =
+    `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="width:100%;height:28px;display:block;">${bars}</svg>`;
+
+  updateParetoTimelineUI(log, rangeMin, rangeMax);
+}
+
+function updateParetoTimelineUI(log, rangeMin, rangeMax){
+  const windowStart = addDays(paretoState.asOf, -(PARETO_WINDOW_DAYS-1)).toISOString().slice(0,10);
+  document.getElementById("prWindowLabel").innerHTML =
+    `${fmtShort(windowStart)} – ${fmtShort(paretoState.asOf)} <small>(${PARETO_WINDOW_DAYS}-day window)</small>`;
+
+  const slider = document.getElementById("prSlider");
+  const v = String(dayDiff(rangeMin, paretoState.asOf));
+  if(slider.value!==v) slider.value = v;
+
+  const svg = document.querySelector("#prDensity svg");
+  if(svg){
+    let marker = svg.querySelector(".pr-marker");
+    if(!marker){
+      marker = document.createElementNS(SVGNS,"rect");
+      marker.setAttribute("class","pr-marker");
+      marker.setAttribute("y",0); marker.setAttribute("height",30);
+      marker.setAttribute("width",0.7);
+      marker.setAttribute("fill","#16253C");
+      svg.appendChild(marker);
+    }
+    const totalDays = dayDiff(rangeMin, rangeMax)+1;
+    marker.setAttribute("x", (dayDiff(rangeMin,paretoState.asOf)/totalDays*100).toFixed(2));
+  }
+
+  drawVarianceParetoChart(log, windowStart, paretoState.asOf);
+}
+
+function stepPareto(delta, log, rangeMin, rangeMax){
+  paretoState._userMoved = true;
+  let next = addDays(paretoState.asOf,delta).toISOString().slice(0,10);
+  if(next<rangeMin) next=rangeMin;
+  if(next>rangeMax){ next=rangeMax; stopParetoPlay(); }
+  paretoState.asOf = next;
+  updateParetoTimelineUI(log, rangeMin, rangeMax);
+}
+function stopParetoPlay(){
+  if(paretoState.timer){ clearInterval(paretoState.timer); paretoState.timer=null; }
+  paretoState.playing = false;
+  document.getElementById("prPlay").textContent = "▶";
+  document.getElementById("prPlay").classList.remove("playing");
+}
+
+function initParetoTimelineControls(){
+  function bounds(){
+    const log = loadDailyLog();
+    const missDates = allMissDates(log);
+    const proj = projectDateRange();
+    const rangeMin = proj.min;
+    const lastMiss = missDates.length ? missDates[missDates.length-1] : null;
+    const rangeMax = (lastMiss && lastMiss>TODAY) ? lastMiss : TODAY;
+    return {log, rangeMin, rangeMax};
+  }
+  document.getElementById("prSlider").addEventListener("input",(e)=>{
+    const b = bounds(); if(!b) return;
+    stopParetoPlay();
+    paretoState._userMoved = true;
+    paretoState.asOf = addDays(b.rangeMin, parseInt(e.target.value,10)).toISOString().slice(0,10);
+    updateParetoTimelineUI(b.log, b.rangeMin, b.rangeMax);
+  });
+  document.getElementById("prPrev").onclick = ()=>{ const b=bounds(); if(b){ stopParetoPlay(); stepPareto(-1,b.log,b.rangeMin,b.rangeMax); } };
+  document.getElementById("prNext").onclick = ()=>{ const b=bounds(); if(b){ stopParetoPlay(); stepPareto(1,b.log,b.rangeMin,b.rangeMax); } };
+  document.getElementById("prLatest").onclick = ()=>{
+    const b=bounds(); if(!b) return;
+    stopParetoPlay();
+    paretoState._userMoved = true;
+    paretoState.asOf = b.rangeMax;
+    updateParetoTimelineUI(b.log,b.rangeMin,b.rangeMax);
+  };
+  document.getElementById("prPlay").onclick = ()=>{
+    const b=bounds(); if(!b) return;
+    if(paretoState.playing){ stopParetoPlay(); return; }
+    paretoState.playing = true;
+    document.getElementById("prPlay").textContent = "⏸";
+    document.getElementById("prPlay").classList.add("playing");
+    paretoState.timer = setInterval(()=>{
+      const bb=bounds(); if(!bb){ stopParetoPlay(); return; }
+      stepPareto(1,bb.log,bb.rangeMin,bb.rangeMax);
+    }, 550);
+  };
 }
 
 // Classic Pareto: bars (count) sorted descending + cumulative-% line on a
 // secondary axis, with the standard 80% reference line marking the "vital few".
-function drawVarianceParetoChart(dailyLogData){
+function drawVarianceParetoChart(dailyLogData, windowStart, windowEnd){
   const wrap = document.getElementById("dlPareto");
   const counts = {};
   RFV_REASONS.forEach(r=>counts[r]=0);
   let totalMisses = 0;
-  Object.values(dailyLogData).forEach(r=>{
-    if(r.status==="incomplete"){
-      const reason = r.reason || "Other";
-      counts[reason] = (counts[reason]||0)+1;
-      totalMisses++;
+  Object.keys(dailyLogData).forEach(key=>{
+    const r = dailyLogData[key];
+    if(r.status!=="incomplete") return;
+    if(windowStart){
+      const d = key.slice(key.lastIndexOf("@")+1);
+      if(d<windowStart || d>windowEnd) return;
     }
+    const reason = r.reason || "Other";
+    counts[reason] = (counts[reason]||0)+1;
+    totalMisses++;
   });
 
   if(totalMisses===0){
-    wrap.innerHTML = `<div class="la-empty" style="padding:26px 4px;">No misses logged yet — mark a task "✕ Missed" with a reason above to populate this chart.</div>`;
+    wrap.innerHTML = `<div class="la-empty" style="padding:26px 4px;">No misses logged in this window — drag the timeline to a different period, or mark a task "✕ Missed" to populate this chart.</div>`;
     return;
   }
 
@@ -3925,6 +4207,7 @@ window.addEventListener("resize", ()=>{
 renderTabs();
 initLookaheadControls();
 initDailyLogControls();
+initParetoTimelineControls();
 initTimelineControls();
 renderAll();
 })();
