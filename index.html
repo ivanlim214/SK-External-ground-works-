@@ -773,6 +773,35 @@ table.varlog .rt{color:var(--accent-ink);font-family:var(--font-mono);font-size:
 }
 .sop-cascade b{color:#3D2F04;}
 
+.save-toast{
+  position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);
+  background:var(--navy-800);color:#fff;padding:11px 20px;border-radius:24px;
+  font-size:12.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.28);
+  display:flex;align-items:center;gap:9px;
+  opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;
+  z-index:500;max-width:min(90vw,480px);text-align:left;
+}
+.save-toast.show{opacity:1;transform:translate(-50%,0);}
+.save-toast .st-dot{
+  width:8px;height:8px;border-radius:50%;background:#4CD778;flex:none;
+  box-shadow:0 0 0 3px rgba(76,215,120,.25);margin-top:1px;
+}
+
+.autoexport-status{margin-top:10px;font-size:11.5px;}
+.aex-link{
+  background:none;border:1px dashed var(--paper-line);border-radius:14px;
+  color:var(--accent-ink);padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;
+}
+.aex-link:hover{background:#FDEDE1;border-color:var(--accent);}
+.aex-on{color:var(--ink-soft);}
+.aex-on b{color:var(--ink);}
+.aex-dim{color:var(--ink-faint);font-size:11px;}
+.aex-unlink{
+  background:none;border:none;color:var(--ink-faint);font-size:10.5px;
+  text-decoration:underline;cursor:pointer;margin-left:8px;padding:0;
+}
+.aex-unlink:hover{color:var(--ink);}
+
 /* ---- Playbook tab ------------------------------------------------------- */
 .pb-diagram-wrap{max-width:820px;margin:14px auto 4px;}
 .pb-diagram-wrap svg{width:100%;height:auto;display:block;}
@@ -1044,7 +1073,7 @@ footer.appfoot{
           <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
             <div>
               <h4>Excel Handover</h4>
-              <div class="desc">Export a colour-coded, linked workbook — Site Status has a dropdown in Daily Log that the Grid sheets read live via formula, and a <b>Zone Schedule</b> sheet lets you resequence: fill in a new start date for any zone and re-import to actually move it, everywhere in the app — Flowline, Grid, Dashboard, all of it. Share the file with the team or file it as a site record, then import it back to sync.</div>
+              <div class="desc">Export a colour-coded, linked workbook — Site Status has a dropdown in Daily Log that the Grid sheets read live via formula, and a <b>Zone Schedule</b> sheet lets you resequence: fill in a new start date for any zone and re-import to actually move it, everywhere in the app — Flowline, Grid, Dashboard, all of it. Share the file with the team or file it as a site record, then import it back to sync. <b>Date and status changes autosave to this browser instantly</b> — but that's local only. Export whenever you want that saved as a file, to share it or open it somewhere else.</div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <button class="mtbtn" id="dlExportXlsx" style="width:auto;padding:0 14px;font-size:10.5px;">⬇ Export Excel</button>
@@ -1054,6 +1083,7 @@ footer.appfoot{
             </div>
           </div>
           <div id="dlImportStatus" class="import-status"></div>
+          <div id="autoExportStatus" class="autoexport-status"></div>
         </div>
       </section>
 
@@ -1405,6 +1435,7 @@ footer.appfoot{
 </div>
 
 <div class="svg-tip" id="tip"></div>
+<div id="saveToast" class="save-toast"></div>
 <div class="status-popover" id="statusPopover" style="display:none;">
   <div class="sp-head" id="spHead"></div>
   <div class="sp-options" id="spOptions"></div>
@@ -1678,6 +1709,8 @@ function moveZone(disc, pkg, zoneName, direction){ // direction: -1 up, +1 down
   saveZoneOrder(overrides);
   rebuildFlatTasks();
   renderAll();
+  scheduleAutoExport();
+  showToast(`Saved — row order updated`);
 }
 
 function resetZoneOrder(disc, pkg){
@@ -1686,6 +1719,8 @@ function resetZoneOrder(disc, pkg){
   saveZoneOrder(overrides);
   rebuildFlatTasks();
   renderAll();
+  scheduleAutoExport();
+  showToast(`Saved — row order reset to original`);
 }
 function packagesOf(disc){ return Object.keys(DATA[disc]); }
 
@@ -2109,6 +2144,7 @@ function openStatusPopover(evt, cellKey, meta){
       saveTaskStatus(log);
       closeStatusPopover();
       if(state.view==="grid") drawGrid();
+      scheduleAutoExport();
     };
     opts.appendChild(btn);
   });
@@ -2173,6 +2209,8 @@ function openScheduleEditPopover(evt, disc, pkg, zone){
     reloadSchedule();
     renderAll();
     closeSchedulePopover();
+    scheduleAutoExport();
+    showToast(`Saved — ${zone} now starts ${fmtShort(val)}`);
   };
   resetBtn.onclick = ()=>{
     const ov = loadScheduleOverrides();
@@ -2181,6 +2219,8 @@ function openScheduleEditPopover(evt, disc, pkg, zone){
     reloadSchedule();
     renderAll();
     closeSchedulePopover();
+    scheduleAutoExport();
+    showToast(`Saved — ${zone} reset to the original programme date`);
   };
   document.getElementById("schedCancel").onclick = closeSchedulePopover;
 
@@ -2231,6 +2271,8 @@ function openActivityEditPopover(evt, disc, pkg, zone, idx, seg){
     reloadSchedule();
     renderAll();
     closeSchedulePopover();
+    scheduleAutoExport();
+    showToast(`Saved — ${seg.label} now starts ${fmtShort(val)}, ${wdVal}d`);
   };
   resetBtn.onclick = ()=>{
     const ov = loadScheduleOverrides();
@@ -2242,10 +2284,21 @@ function openActivityEditPopover(evt, disc, pkg, zone, idx, seg){
     reloadSchedule();
     renderAll();
     closeSchedulePopover();
+    scheduleAutoExport();
+    showToast(`Saved — ${seg.label} reset to the original programme`);
   };
   document.getElementById("schedCancel").onclick = closeSchedulePopover;
 
   positionPopover(pop, evt);
+}
+
+let toastTimer = null;
+function showToast(msg){
+  const el = document.getElementById("saveToast");
+  el.innerHTML = `<span class="st-dot"></span>${msg}`;
+  el.classList.add("show");
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.classList.remove("show"); }, 2600);
 }
 
 function positionPopover(pop, evt){
@@ -2893,7 +2946,7 @@ function drawLookahead(){
         yes.onclick = ()=>{
           const l = loadLog();
           l[logKey(t.id,weekStart)] = {status:"complete"};
-          saveLog(l); drawLookahead();
+          saveLog(l); drawLookahead(); scheduleAutoExport();
         };
         const no = document.createElement("button");
         no.className = "lc-btn on-no" + (rec.status==="incomplete"?" active":"");
@@ -2902,7 +2955,7 @@ function drawLookahead(){
           const l = loadLog();
           const prev = l[logKey(t.id,weekStart)] || {};
           l[logKey(t.id,weekStart)] = {status:"incomplete", reason: prev.reason || RFV_REASONS[0]};
-          saveLog(l); drawLookahead();
+          saveLog(l); drawLookahead(); scheduleAutoExport();
         };
         ctrl.appendChild(yes); ctrl.appendChild(no);
         card.appendChild(ctrl);
@@ -2919,7 +2972,7 @@ function drawLookahead(){
           sel.onchange = ()=>{
             const l = loadLog();
             l[logKey(t.id,weekStart)] = {status:"incomplete", reason:sel.value};
-            saveLog(l); drawLookahead();
+            saveLog(l); drawLookahead(); scheduleAutoExport();
           };
           card.appendChild(sel);
         }
@@ -2930,7 +2983,7 @@ function drawLookahead(){
         ready.onclick = ()=>{
           const l = loadLog();
           l[logKey(t.id,weekStart)] = {status:"ready"};
-          saveLog(l); drawLookahead();
+          saveLog(l); drawLookahead(); scheduleAutoExport();
         };
         const constrained = document.createElement("button");
         constrained.className = "lc-btn constrained" + (rec.status==="constrained"?" active":"");
@@ -2938,7 +2991,7 @@ function drawLookahead(){
         constrained.onclick = ()=>{
           const l = loadLog();
           l[logKey(t.id,weekStart)] = {status:"constrained"};
-          saveLog(l); drawLookahead();
+          saveLog(l); drawLookahead(); scheduleAutoExport();
         };
         ctrl.appendChild(ready); ctrl.appendChild(constrained);
         card.appendChild(ctrl);
@@ -3020,6 +3073,7 @@ function initLookaheadControls(){
     if(confirm("Clear all recorded PPC tracking and constraint data? This cannot be undone.")){
       localStorage.removeItem(PPC_KEY);
       drawLookahead();
+      scheduleAutoExport();
     }
   };
   document.getElementById("laExport").onclick = ()=>{
@@ -3177,6 +3231,7 @@ function drawDailyLog(){
         l[key] = {...l[key], resolvedOn:date};
         saveDailyLog(l);
         drawDailyLog();
+        scheduleAutoExport();
       };
       ctrl.appendChild(done);
       card.appendChild(ctrl);
@@ -3212,11 +3267,11 @@ function drawDailyLog(){
     const yes = document.createElement("button");
     yes.className = "lc-btn on-yes"+(rec.status==="complete"?" active":"");
     yes.textContent = "✓ Done";
-    yes.onclick = ()=>{ const l=loadDailyLog(); l[dailyKey(t.id,date)]={status:"complete"}; saveDailyLog(l); drawDailyLog(); };
+    yes.onclick = ()=>{ const l=loadDailyLog(); l[dailyKey(t.id,date)]={status:"complete"}; saveDailyLog(l); drawDailyLog(); scheduleAutoExport(); };
     const no = document.createElement("button");
     no.className = "lc-btn on-no"+(rec.status==="incomplete"?" active":"");
     no.textContent = "✕ Missed";
-    no.onclick = ()=>{ const l=loadDailyLog(); const p=l[dailyKey(t.id,date)]||{}; l[dailyKey(t.id,date)]={status:"incomplete",reason:p.reason||RFV_REASONS[0], ...(p.resolvedOn?{resolvedOn:p.resolvedOn}:{})}; saveDailyLog(l); drawDailyLog(); };
+    no.onclick = ()=>{ const l=loadDailyLog(); const p=l[dailyKey(t.id,date)]||{}; l[dailyKey(t.id,date)]={status:"incomplete",reason:p.reason||RFV_REASONS[0], ...(p.resolvedOn?{resolvedOn:p.resolvedOn}:{})}; saveDailyLog(l); drawDailyLog(); scheduleAutoExport(); };
     ctrl.appendChild(yes); ctrl.appendChild(no);
     card.appendChild(ctrl);
     if(rec.status==="incomplete"){
@@ -3228,7 +3283,7 @@ function drawDailyLog(){
         if((rec.reason||RFV_REASONS[0])===r) opt.selected=true;
         sel.appendChild(opt);
       });
-      sel.onchange = ()=>{ const l=loadDailyLog(); const p=l[dailyKey(t.id,date)]||{}; l[dailyKey(t.id,date)]={status:"incomplete",reason:sel.value, ...(p.resolvedOn?{resolvedOn:p.resolvedOn}:{})}; saveDailyLog(l); drawDailyLog(); };
+      sel.onchange = ()=>{ const l=loadDailyLog(); const p=l[dailyKey(t.id,date)]||{}; l[dailyKey(t.id,date)]={status:"incomplete",reason:sel.value, ...(p.resolvedOn?{resolvedOn:p.resolvedOn}:{})}; saveDailyLog(l); drawDailyLog(); scheduleAutoExport(); };
       card.appendChild(sel);
     }
     list.appendChild(card);
@@ -3576,6 +3631,8 @@ function initDailyLogControls(){
       reloadSchedule();
       renderAll();
       showImportStatus("Schedule reset to the original issued programme.", "ok");
+      showToast("Saved — schedule reset to the original programme");
+      scheduleAutoExport();
     }
   };
 }
@@ -3948,7 +4005,162 @@ async function buildWorkbook(){
     });
   });
 
+  /* ---- Hidden internal state sheet — the exact zone-resequencing state
+     (every anchor, not just whole-zone starts), so re-importing this same file
+     on a different device or a cleared browser restores it perfectly, rather
+     than relying on reconstructing it from the visible Zone Schedule sheet. ---- */
+  const stateSh = wb.addWorksheet("App State", {state:"hidden"});
+  stateSh.getCell("A1").value = "Internal — do not edit. Restores exact zone resequencing (including individual activity edits) when this file is re-imported, even on a different device or a cleared browser.";
+  stateSh.getCell("A2").value = JSON.stringify({
+    scheduleOverrides: loadScheduleOverrides(),
+    zoneOrder: loadZoneOrder()
+  });
+
   return wb;
+}
+
+/* ---------------------------------------------------------------------
+   AUTO-EXPORT — links a real file on disk (via the File System Access API,
+   Chrome/Edge only) so every save also silently rewrites that exact file.
+   Falls back to nothing on browsers without the API; manual Export/Import
+   keeps working everywhere regardless.
+--------------------------------------------------------------------- */
+const AUTOEXPORT_SUPPORTED = typeof window.showSaveFilePicker === "function";
+const autoExportState = { handle:null, enabled:false, saving:false, needsPermission:false, lastSavedAt:null };
+
+function idbOpen(){
+  return new Promise((resolve,reject)=>{
+    const req = indexedDB.open("skn4c49_fs", 1);
+    req.onupgradeneeded = ()=>{ req.result.createObjectStore("handles"); };
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+async function idbSet(key,val){
+  const db = await idbOpen();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction("handles","readwrite");
+    tx.objectStore("handles").put(val,key);
+    tx.oncomplete = ()=>resolve(); tx.onerror = ()=>reject(tx.error);
+  });
+}
+async function idbGet(key){
+  const db = await idbOpen();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction("handles","readonly");
+    const req = tx.objectStore("handles").get(key);
+    req.onsuccess = ()=>resolve(req.result); req.onerror = ()=>reject(req.error);
+  });
+}
+async function idbDelete(key){
+  const db = await idbOpen();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction("handles","readwrite");
+    tx.objectStore("handles").delete(key);
+    tx.oncomplete = ()=>resolve(); tx.onerror = ()=>reject(tx.error);
+  });
+}
+
+function updateAutoExportUI(){
+  const el = document.getElementById("autoExportStatus");
+  if(!el) return;
+  if(!AUTOEXPORT_SUPPORTED){
+    el.innerHTML = `<span class="aex-dim">Auto-export to a file needs Chrome or Edge — not available in this browser. Export/Import below still work as normal.</span>`;
+    return;
+  }
+  if(autoExportState.needsPermission){
+    el.innerHTML = `<button class="aex-link" id="aexResume">🔗 Resume auto-export to ${escHtml(autoExportState.handle.name)}</button>`;
+    document.getElementById("aexResume").onclick = resumeLinkedFilePermission;
+    return;
+  }
+  if(autoExportState.enabled && autoExportState.handle){
+    const savedTxt = autoExportState.lastSavedAt ? "saved " + fmtClock(autoExportState.lastSavedAt) : "linked, not yet saved";
+    el.innerHTML = `<span class="aex-on">${autoExportState.saving?"⏳ saving…":"🔗 auto-exporting to <b>"+escHtml(autoExportState.handle.name)+"</b> — "+savedTxt}</span> <button class="aex-unlink" id="aexUnlink">Unlink</button>`;
+    document.getElementById("aexUnlink").onclick = unlinkExcelFile;
+  } else {
+    el.innerHTML = `<button class="aex-link" id="aexLink">🔗 Link a file for auto-export</button>`;
+    document.getElementById("aexLink").onclick = linkExcelFile;
+  }
+}
+function escHtml(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function fmtClock(d){ return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"}); }
+
+async function linkExcelFile(){
+  if(!AUTOEXPORT_SUPPORTED) return;
+  try{
+    const handle = await window.showSaveFilePicker({
+      suggestedName: "SKN4C49_PPC_Log_"+TODAY+".xlsx",
+      types: [{description:"Excel Workbook", accept:{"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":[".xlsx"]}}]
+    });
+    autoExportState.handle = handle;
+    autoExportState.enabled = true;
+    autoExportState.needsPermission = false;
+    try{ await idbSet("fileHandle", handle); }catch(e){ console.warn("couldn't remember the linked file across reloads:", e); }
+    updateAutoExportUI();
+    await writeLinkedExcelFile();
+    showToast("Linked — every save now also writes to "+handle.name);
+  }catch(e){
+    if(e.name!=="AbortError") showImportStatus("Couldn't link a file: "+e.message, "err");
+  }
+}
+async function unlinkExcelFile(){
+  autoExportState.handle = null;
+  autoExportState.enabled = false;
+  autoExportState.needsPermission = false;
+  try{ await idbDelete("fileHandle"); }catch(e){ /* not fatal — state is already cleared in memory */ }
+  updateAutoExportUI();
+  showToast("Unlinked — back to manual Export");
+}
+async function tryResumeLinkedFile(){
+  if(!AUTOEXPORT_SUPPORTED) return;
+  try{
+    const handle = await idbGet("fileHandle");
+    if(!handle) return;
+    const perm = await handle.queryPermission({mode:"readwrite"});
+    autoExportState.handle = handle;
+    if(perm==="granted"){ autoExportState.enabled = true; }
+    else { autoExportState.needsPermission = true; }
+    updateAutoExportUI();
+  }catch(e){ /* stale or revoked handle — ignore, user can re-link */ }
+}
+async function resumeLinkedFilePermission(){
+  if(!autoExportState.handle) return;
+  try{
+    const perm = await autoExportState.handle.requestPermission({mode:"readwrite"});
+    if(perm==="granted"){
+      autoExportState.enabled = true;
+      autoExportState.needsPermission = false;
+      updateAutoExportUI();
+      showToast("Auto-export resumed — saving to "+autoExportState.handle.name);
+    }
+  }catch(e){ /* ignore */ }
+}
+
+let autoExportTimer = null;
+function scheduleAutoExport(){
+  if(!autoExportState.enabled || !autoExportState.handle) return;
+  if(autoExportTimer) clearTimeout(autoExportTimer);
+  autoExportTimer = setTimeout(writeLinkedExcelFile, 900);
+}
+async function writeLinkedExcelFile(){
+  if(!autoExportState.handle) return;
+  autoExportState.saving = true;
+  updateAutoExportUI();
+  try{
+    const wb = await buildWorkbook();
+    const buf = await wb.xlsx.writeBuffer();
+    const writable = await autoExportState.handle.createWritable();
+    await writable.write(buf);
+    await writable.close();
+    autoExportState.lastSavedAt = new Date();
+  }catch(e){
+    console.error("auto-export failed", e);
+    showImportStatus("Auto-export to the linked file failed — it may have been moved or deleted. Re-link it to resume.", "err");
+    autoExportState.enabled = false;
+  }finally{
+    autoExportState.saving = false;
+    updateAutoExportUI();
+  }
 }
 
 async function exportExcel(){
@@ -4046,6 +4258,25 @@ async function importExcel(file){
     const wb = new ExcelJSlib.Workbook();
     await wb.xlsx.load(buf);
 
+    // Restore the exact zone-resequencing state first, if this file carries it —
+    // this is what makes PPC line up correctly when re-importing on a different
+    // device or a cleared browser: without it, imported Daily Log rows are keyed
+    // to dates that no longer match what the (default) schedule considers "today".
+    let stateRestored = false;
+    const stateSh = wb.getWorksheet("App State");
+    if(stateSh){
+      try{
+        const raw = stateSh.getCell("A2").value;
+        if(raw){
+          const parsed = JSON.parse(raw);
+          if(parsed.scheduleOverrides) saveScheduleOverrides(parsed.scheduleOverrides);
+          if(parsed.zoneOrder) saveZoneOrder(parsed.zoneOrder);
+          stateRestored = true;
+          reloadSchedule();
+        }
+      }catch(e){ /* malformed or missing — fall through, Zone Schedule sheet parsing below still runs */ }
+    }
+
     let dailyCount = 0, weeklyCount = 0, siteCount = 0;
     const dsh = wb.getWorksheet("Daily Log");
     if(dsh){
@@ -4136,13 +4367,13 @@ async function importExcel(file){
         scheduleChanges.push(zone+" → "+fmtShort(nsISO));
         scheduleCount++;
       });
-      if(scheduleCount>0){
+      if(scheduleCount>0 || stateRestored){
         saveScheduleOverrides(overrides);
         reloadSchedule();
       }
     }
 
-    if(dailyCount===0 && weeklyCount===0 && siteCount===0 && scheduleCount===0){
+    if(dailyCount===0 && weeklyCount===0 && siteCount===0 && scheduleCount===0 && !stateRestored){
       const skipNote = scheduleSkipped ? " Found "+scheduleSkipped+" Zone Schedule row(s) with a New Start Date value that couldn't be read as a date — check it's a real date, not text in an unusual format." : "";
       showImportStatus("No recognisable log rows found in "+file.name+"."+skipNote+" Expecting 'Daily Log' / 'Weekly Log' / 'Zone Schedule' sheets from an export of this board.", "err");
     } else {
@@ -4153,7 +4384,10 @@ async function importExcel(file){
       if(scheduleCount) parts.push(scheduleCount+" zone-schedule");
       const skipNote = scheduleSkipped ? " ("+scheduleSkipped+" Zone Schedule row(s) had a New Start Date that couldn't be read as a date and were skipped.)" : "";
       const changeNote = scheduleChanges.length ? " Moved: "+scheduleChanges.join("; ")+"." : "";
-      showImportStatus("Imported "+parts.join(", ")+" entries from "+file.name+(scheduleCount?" — schedule updated, check the Flowline tab.":".")+changeNote+skipNote, scheduleSkipped?"err":"ok");
+      const restoreNote = stateRestored ? " Resequenced zones from this file were restored, so PPC lines up correctly." : "";
+      const mainMsg = parts.length ? "Imported "+parts.join(", ")+" entries from "+file.name : "Read "+file.name;
+      showImportStatus(mainMsg+(scheduleCount?" — schedule updated, check the Flowline tab.":".")+restoreNote+changeNote+skipNote, scheduleSkipped?"err":"ok");
+      scheduleAutoExport();
     }
     renderAll();
   }catch(e){
@@ -4209,6 +4443,8 @@ initLookaheadControls();
 initDailyLogControls();
 initParetoTimelineControls();
 initTimelineControls();
+updateAutoExportUI();
+tryResumeLinkedFile();
 renderAll();
 })();
 
