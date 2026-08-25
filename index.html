@@ -1417,7 +1417,7 @@ footer.appfoot{
             <ol class="sop-steps excel-flavor">
               <li><b>Export</b> — Daily Log tab → <span class="kbd">⬇ Export Excel</span>.</li>
               <li><b>Open the "Zone Schedule" sheet</b> — one row per zone, with its current start/end dates already filled in.</li>
-              <li><b>Fill in "New Start Date"</b> for any zone you want to move — leave every other zone's cell blank. This sheet only moves whole zones; edit individual activities in the app itself (Method 1).</li>
+              <li><b>Edit "New Start Date"</b> for any zone you want to move — it's pre-filled with that zone's current date, so leaving it untouched (or re-importing without editing it) makes no change. This sheet only moves whole zones; edit individual activities in the app itself (Method 1).</li>
               <li><b>Re-import</b> — Daily Log tab → <span class="kbd">⬆ Import Excel</span> → pick the edited file. The app rebuilds that zone's activity chain from the new date, same durations, Sundays skipped.</li>
               <li><b>Verify</b> — export again and check the <b>"Resequenced?"</b> column: it flags exactly which zones have been moved and whether individual activities inside them were also touched.</li>
             </ol>
@@ -3926,7 +3926,8 @@ async function buildWorkbook(){
           modCell.font = {color:{argb:"FFB8AF97"}};
         }
         const nsCell = row.getCell("ns");
-        nsCell.numFmt = "dd-mmm-yyyy";
+        nsCell.value = toDate(segs[0].start);
+        nsCell.numFmt = "dd-mmm-yyyy"; nsCell.alignment={horizontal:"center"};
         nsCell.fill = {type:"pattern",pattern:"solid",fgColor:{argb:"FFFFF7EF"}};
         nsCell.border = {top:{style:"thin",color:{argb:"FFC99A1A"}},left:{style:"thin",color:{argb:"FFC99A1A"}},
                           bottom:{style:"thin",color:{argb:"FFC99A1A"}},right:{style:"thin",color:{argb:"FFC99A1A"}}};
@@ -3934,7 +3935,7 @@ async function buildWorkbook(){
       });
     });
   });
-  zsh.getCell("A"+(zsh.rowCount+2)).value = "Leave \"New Start Date\" blank to keep a zone where it is. Fill in a date and re-import to move that zone — its own activity durations (working days, Sundays skipped) carry over unchanged, only the start shifts. Other zones are not moved automatically; check the Flowline tab after importing for any new overlaps.";
+  zsh.getCell("A"+(zsh.rowCount+2)).value = "\"New Start Date\" is pre-filled with each zone's current start — leave it as-is (or re-import unedited) and nothing moves. To move a zone, overwrite the date in that cell and re-import: its own activity durations (working days, Sundays skipped) carry over unchanged, only the start shifts. Other zones are not moved automatically; check the Flowline tab after importing for any new overlaps.";
   zsh.getCell("A"+(zsh.rowCount)).font = {italic:true, size:10, color:{argb:"FF5B6270"}};
 
   /* ---- Colour-coded grid sheets (one per discipline; columns already chronological) ----
@@ -4344,36 +4345,59 @@ async function importExcel(file){
     }
 
     const zsh = wb.getWorksheet("Zone Schedule");
-    let scheduleCount = 0, scheduleSkipped = 0;
+    let scheduleCount = 0, scheduleSkipped = 0, scheduleFallbackCount = 0;
     const scheduleChanges = [];
     if(zsh){
       const overrides = loadScheduleOverrides();
       const cDisc = colByHeader(zsh,"discipline") || 1;
       const cPkg = colByHeader(zsh,"package") || 2;
       const cZone = colByHeader(zsh,"zone") || 3;
+      const cCurStart = colByHeader(zsh,"current start");
       const cNewStart = colByHeader(zsh,"new start date");
       zsh.eachRow({includeEmpty:false},(row,rowNum)=>{
         if(rowNum===1 || !cNewStart) return;
         const discName = (row.getCell(cDisc).value||"").toString().trim();
         const pkg = (row.getCell(cPkg).value||"").toString().trim();
         const zone = (row.getCell(cZone).value||"").toString().trim();
-        const newStartRaw = row.getCell(cNewStart).value;
-        if(!discName || !pkg || !zone || !newStartRaw) return;
+        if(!discName || !pkg || !zone) return;
         const discObj = DISCIPLINES.find(d=>d.name===discName);
         if(!discObj) return;
-        const nsISO = parseAnyDate(newStartRaw);
-        if(!nsISO){ scheduleSkipped++; return; }
-        overrides[zoneOverrideKey(discObj.key,pkg,zone)] = {0:{start:nsISO}};
-        scheduleChanges.push(zone+" → "+fmtShort(nsISO));
-        scheduleCount++;
+
+        const newStartRaw = row.getCell(cNewStart).value;
+        const curStartRaw = cCurStart ? row.getCell(cCurStart).value : null;
+        const nsISO = newStartRaw ? parseAnyDate(newStartRaw) : null;
+        const curISO = curStartRaw ? parseAnyDate(curStartRaw) : null;
+        if(newStartRaw && !nsISO){ scheduleSkipped++; return; }
+
+        // "New Start Date" is pre-filled with the current value on export, so it only
+        // counts as a real request when it's been edited to something different.
+        if(nsISO && (!curISO || nsISO!==curISO)){
+          overrides[zoneOverrideKey(discObj.key,pkg,zone)] = {0:{start:nsISO}};
+          scheduleChanges.push(zone+" → "+fmtShort(nsISO));
+          scheduleCount++;
+          return;
+        }
+
+        // No explicit new request this time. If this file predates the hidden state
+        // sheet (older export, or the sheet got stripped), fall back to "Current Start"
+        // to recover any pre-existing resequencing — compare it against the zone's
+        // original issued-programme date to tell "moved" from "never touched".
+        if(!stateRestored && curISO){
+          const rawZone = RAW_DATA[discObj.key] && RAW_DATA[discObj.key][pkg] && RAW_DATA[discObj.key][pkg][zone];
+          const rawStart = rawZone && rawZone[0] && rawZone[0].start;
+          if(rawStart && rawStart!==curISO){
+            overrides[zoneOverrideKey(discObj.key,pkg,zone)] = {0:{start:curISO}};
+            scheduleFallbackCount++;
+          }
+        }
       });
-      if(scheduleCount>0 || stateRestored){
+      if(scheduleCount>0 || scheduleFallbackCount>0 || stateRestored){
         saveScheduleOverrides(overrides);
         reloadSchedule();
       }
     }
 
-    if(dailyCount===0 && weeklyCount===0 && siteCount===0 && scheduleCount===0 && !stateRestored){
+    if(dailyCount===0 && weeklyCount===0 && siteCount===0 && scheduleCount===0 && scheduleFallbackCount===0 && !stateRestored){
       const skipNote = scheduleSkipped ? " Found "+scheduleSkipped+" Zone Schedule row(s) with a New Start Date value that couldn't be read as a date — check it's a real date, not text in an unusual format." : "";
       showImportStatus("No recognisable log rows found in "+file.name+"."+skipNote+" Expecting 'Daily Log' / 'Weekly Log' / 'Zone Schedule' sheets from an export of this board.", "err");
     } else {
@@ -4384,9 +4408,10 @@ async function importExcel(file){
       if(scheduleCount) parts.push(scheduleCount+" zone-schedule");
       const skipNote = scheduleSkipped ? " ("+scheduleSkipped+" Zone Schedule row(s) had a New Start Date that couldn't be read as a date and were skipped.)" : "";
       const changeNote = scheduleChanges.length ? " Moved: "+scheduleChanges.join("; ")+"." : "";
-      const restoreNote = stateRestored ? " Resequenced zones from this file were restored, so PPC lines up correctly." : "";
+      const restoreNote = stateRestored ? " Resequenced zones from this file were restored, so PPC lines up correctly."
+        : scheduleFallbackCount ? " This file predates full state-saving, so "+scheduleFallbackCount+" previously-resequenced zone"+(scheduleFallbackCount===1?"":"s")+" "+(scheduleFallbackCount===1?"was":"were")+" recovered from its \"Current Start\" column instead — check the Flowline tab looks right, since individual activity edits (not whole-zone moves) can't be recovered this way." : "";
       const mainMsg = parts.length ? "Imported "+parts.join(", ")+" entries from "+file.name : "Read "+file.name;
-      showImportStatus(mainMsg+(scheduleCount?" — schedule updated, check the Flowline tab.":".")+restoreNote+changeNote+skipNote, scheduleSkipped?"err":"ok");
+      showImportStatus(mainMsg+((scheduleCount||scheduleFallbackCount)?" — schedule updated, check the Flowline tab.":".")+restoreNote+changeNote+skipNote, scheduleSkipped?"err":"ok");
       scheduleAutoExport();
     }
     renderAll();
