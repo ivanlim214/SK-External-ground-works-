@@ -311,6 +311,79 @@ main.stage{
 .fl-reorder-btn:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:#fff;}
 .fl-reorder-btn:disabled{opacity:.25;cursor:default;}
 .fl-zone-info{flex:1;min-width:0;padding:10px 0;cursor:pointer;display:flex;flex-direction:column;justify-content:center;}
+.fl-edit-acts{
+  flex:none;width:22px;height:22px;padding:0;border:1px solid var(--paper-line);border-radius:5px;
+  background:#fff;color:var(--ink-faint);font-size:11px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.fl-edit-acts:hover{background:var(--accent);border-color:var(--accent);color:#fff;}
+.fl-add-zone-row{padding:8px 10px;justify-content:center;border-bottom:none;}
+.fl-add-zone-btn{
+  width:100%;padding:7px;border:1px dashed var(--paper-line);border-radius:6px;
+  background:none;color:var(--accent-ink);font-size:11.5px;font-weight:600;cursor:pointer;
+}
+.fl-add-zone-btn:hover{background:#FDEDE1;border-color:var(--accent);}
+
+.ze-overlay{
+  position:fixed;inset:0;background:rgba(15,20,30,.5);z-index:600;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.ze-modal{
+  background:var(--paper-raised);border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.35);
+  width:100%;max-width:560px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;
+}
+.ze-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--paper-line);flex:none;
+}
+.ze-head h3{margin:0;font-size:16px;font-family:var(--font-display);}
+.ze-close{background:none;border:none;font-size:15px;color:var(--ink-faint);cursor:pointer;padding:4px;}
+.ze-close:hover{color:var(--ink);}
+.ze-body{padding:16px 20px;overflow-y:auto;flex:1;}
+.ze-zone-fields{display:flex;gap:14px;margin-bottom:16px;}
+.ze-zone-fields label{flex:1;font-size:11px;color:var(--ink-soft);font-weight:600;display:flex;flex-direction:column;gap:4px;}
+.ze-zone-fields input{
+  font-family:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--paper-line);
+  border-radius:6px;background:#fff;color:var(--ink);font-weight:400;
+}
+.ze-rows-head{
+  display:grid;grid-template-columns:1fr 64px 100px 28px;gap:8px;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-faint);padding:0 2px 6px;
+}
+.ze-rows{display:flex;flex-direction:column;gap:6px;}
+.ze-row{display:grid;grid-template-columns:1fr 64px 100px 28px;gap:8px;align-items:center;}
+.ze-row input{
+  font-family:inherit;font-size:12.5px;padding:6px 8px;border:1px solid var(--paper-line);
+  border-radius:5px;background:#fff;color:var(--ink);width:100%;box-sizing:border-box;
+}
+.ze-row input.ze-code{text-align:center;text-transform:uppercase;}
+.ze-row input.ze-wd{text-align:center;}
+.ze-row-del{
+  width:26px;height:26px;border:1px solid var(--paper-line);border-radius:5px;background:#fff;
+  color:var(--ink-faint);cursor:pointer;font-size:11px;
+}
+.ze-row-del:hover:not(:disabled){background:#FBE4E1;border-color:#C62828;color:#C62828;}
+.ze-row-del:disabled{opacity:.25;cursor:default;}
+.ze-add-row-btn{
+  margin-top:10px;width:100%;padding:8px;border:1px dashed var(--paper-line);border-radius:6px;
+  background:none;color:var(--accent-ink);font-size:12px;font-weight:600;cursor:pointer;
+}
+.ze-add-row-btn:hover{background:#FDEDE1;border-color:var(--accent);}
+.ze-hint{color:#C62828;font-size:12px;margin:10px 0 0;min-height:1em;}
+.ze-note{color:var(--ink-faint);font-size:10.5px;line-height:1.5;margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--paper-line);}
+.ze-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 20px;border-top:1px solid var(--paper-line);flex:none;
+}
+.ze-foot-right{display:flex;gap:8px;margin-left:auto;}
+.ze-btn{font-family:inherit;font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:7px;cursor:pointer;border:1px solid transparent;}
+.ze-btn-ghost{background:none;border-color:var(--paper-line);color:var(--ink-soft);}
+.ze-btn-ghost:hover{background:var(--paper-line-soft);}
+.ze-btn-primary{background:var(--accent);color:#fff;}
+.ze-btn-primary:hover{background:var(--accent-2);}
+.ze-btn-danger{background:none;border-color:#E3B9B4;color:#C62828;}
+.ze-btn-danger:hover{background:#FBE4E1;}
 .flow-labels .fl-zone .fz-name{font-weight:700;font-size:13px;color:var(--ink);}
 .flow-labels .fl-zone .fz-sub{font-family:var(--font-mono);font-size:9.5px;color:var(--ink-faint);margin-top:1px;}
 .svg-tip{
@@ -696,7 +769,7 @@ table.varlog .rt{color:var(--accent-ink);font-family:var(--font-mono);font-size:
   background:#EAEEF6;color:#3A4C72;
 }
 #dlDateBadge.sunday{background:#F1EAD8;color:#8A6B2E;}
-.heat-strip{display:flex;gap:3px;flex-wrap:wrap;margin-top:10px;}
+.heat-strip{display:flex;gap:3px;margin-top:10px;}
 #dlPpcBars{width:100%;display:block;}
 .ppcbar{cursor:pointer;}
 .ppcbar rect.ppcbar-fill{transition:opacity .1s;}
@@ -704,7 +777,7 @@ table.varlog .rt{color:var(--accent-ink);font-family:var(--font-mono);font-size:
 .ppcbar-today rect.ppcbar-track{stroke:var(--accent);stroke-width:1.2;}
 .ppcbar-axis-label{font-family:var(--font-mono);}
 .heat-cell{
-  width:22px;height:22px;border-radius:4px;cursor:pointer;
+  flex:1 1 0;min-width:0;height:22px;border-radius:4px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   font-family:var(--font-mono);font-size:8px;color:rgba(0,0,0,.55);
   border:1px solid rgba(0,0,0,.06);
@@ -756,7 +829,7 @@ table.varlog .rt{color:var(--accent-ink);font-family:var(--font-mono);font-size:
 }
 .sop-steps li:last-child::after{display:none;}
 .sop-steps b{color:var(--ink);}
-.sop-steps .kbd{
+.sop-steps .kbd, .sop-cascade .kbd{
   font-family:var(--font-mono);font-size:10.5px;background:var(--paper-line-soft);
   padding:1px 6px;border-radius:4px;color:var(--ink);
 }
@@ -1427,6 +1500,34 @@ footer.appfoot{
         <div class="sop-cascade">
           <b>What does — and doesn't — move automatically:</b> a schedule edit only shifts the zone or activity you touched (and, for an activity edit, whatever comes after it in that same zone). Nothing cascades to other zones, even ones that were takt-chained to it in the original plan — if stretching Excavation in Part A1 should logically push Part A2 as well, that's on you to go make that edit too. This is deliberate: auto-cascading a whole schedule silently is a good way to hide a real problem. Check the Flowline's crossing lines and the Dashboard's "Peak Concurrent Zones" after any edit — that's the tool's way of showing you when a resequencing creates an overlap or a gap.
         </div>
+
+        <h3 class="sop-subhead">Adding Zones &amp; Activities</h3>
+        <p class="sop-subhead-desc">Beyond resequencing dates, the programme itself can be extended — a brand-new zone, or extra activities on an existing one. This is app-only; there's no Excel method for it, though the result still travels through Excel export/import automatically, via the same hidden state sheet that carries resequencing.</p>
+
+        <div class="dash-cols">
+          <div class="card">
+            <h4>Add a new zone</h4>
+            <div class="desc">On the <b>Flowline</b> tab.</div>
+            <ol class="sop-steps">
+              <li>Scroll to the bottom of the zone list and click <span class="kbd">+ Add zone</span>.</li>
+              <li>Give it a name, a start date, and at least one activity (name, trade code, duration in working days). Add more with <span class="kbd">+ Add activity</span> before saving.</li>
+              <li>It appears everywhere immediately — Flowline, Grid, Dashboard, Daily Log — and can be resequenced or reordered exactly like an original zone.</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h4>Add or edit activities in any zone</h4>
+            <div class="desc">On the <b>Flowline</b> tab, for any zone — original or added.</div>
+            <ol class="sop-steps">
+              <li>Click the <span class="kbd">✎</span> button next to the zone's name.</li>
+              <li>Relabel an activity, change its trade code, or adjust its duration — all in place.</li>
+              <li><span class="kbd">+ Add activity</span> appends a new one at the end of that zone's sequence.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="sop-cascade">
+          <b>Why existing activities can't be reordered or deleted:</b> every activity's identity — and every Done/Missed mark ever recorded against it — is tied to its position in the zone's sequence. Inserting or removing one in the middle would silently reassign every later activity's history onto the wrong task, with no warning. So the editor only allows what's provably safe: relabelling or re-timing an activity in place (same position, nothing shifts), and appending new activities at the end (nothing before them moves). Only the very last activity in a zone can be removed, which cleanly undoes an append. Original zones from the issued programme can't be deleted at all — only zones you've added yourself can, via <span class="kbd">Delete this zone</span> inside their editor. If you need to permanently remove something this guard rail is blocking, that's a structural change worth doing carefully rather than working around — ask directly.
+        </div>
       </section>
     </main>
   </div>
@@ -1436,6 +1537,35 @@ footer.appfoot{
 
 <div class="svg-tip" id="tip"></div>
 <div id="saveToast" class="save-toast"></div>
+
+<div id="zoneEditorOverlay" class="ze-overlay" style="display:none;">
+  <div class="ze-modal">
+    <div class="ze-head">
+      <h3 id="zeTitle">Add zone</h3>
+      <button id="zeClose" class="ze-close" title="Close">✕</button>
+    </div>
+    <div class="ze-body">
+      <div id="zeZoneFields" class="ze-zone-fields">
+        <label>Zone name<input type="text" id="zeZoneName" placeholder="e.g. Part A7"></label>
+        <label>Start date<input type="date" id="zeStartDate"></label>
+      </div>
+      <div class="ze-rows-head">
+        <span>Trade / Activity</span><span>Code</span><span>Working days</span><span></span>
+      </div>
+      <div id="zeRows" class="ze-rows"></div>
+      <button id="zeAddRow" class="ze-add-row-btn">+ Add activity</button>
+      <p id="zeHint" class="ze-hint"></p>
+      <p class="ze-note">Existing activities can be relabelled or re-timed, but not reordered or deleted (except the last one) — this protects any PPC history already recorded against them.</p>
+    </div>
+    <div class="ze-foot">
+      <button id="zeDeleteZone" class="ze-btn ze-btn-danger" style="display:none;">Delete this zone</button>
+      <div class="ze-foot-right">
+        <button id="zeCancel" class="ze-btn ze-btn-ghost">Cancel</button>
+        <button id="zeSave" class="ze-btn ze-btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="status-popover" id="statusPopover" style="display:none;">
   <div class="sp-head" id="spHead"></div>
   <div class="sp-options" id="spOptions"></div>
@@ -1662,6 +1792,38 @@ function buildZoneWithAnchors(rawSegs, anchors){
   return out;
 }
 
+const ACTIVITY_OVERRIDE_KEY = "skn4c49_activity_overrides_v1";
+function loadActivityOverrides(){ try{ return JSON.parse(localStorage.getItem(ACTIVITY_OVERRIDE_KEY)) || {}; }catch(e){ return {}; } }
+function saveActivityOverrides(o){ try{ localStorage.setItem(ACTIVITY_OVERRIDE_KEY, JSON.stringify(o)); }catch(e){} }
+
+/* Builds a structural "effective raw" programme: RAW_DATA with any user-added zones
+   and/or user-edited activity lists merged in. This only changes WHICH activities
+   exist for a zone — applyScheduleOverrides() then runs on top exactly as before,
+   so date logic (anchors, working-day chaining) is completely untouched. Dates here
+   are placeholders chained from the zone's own natural start (or a fallback for a
+   brand-new zone); a real start almost always arrives via a paired scheduleOverride
+   anchor set at creation time, applied afterward in applyScheduleOverrides(). */
+function buildEffectiveRawData(){
+  const cloned = JSON.parse(JSON.stringify(RAW_DATA));
+  const actOverrides = loadActivityOverrides();
+  Object.keys(actOverrides).forEach(key=>{
+    const [disc,pkg,zone] = key.split("|");
+    if(!cloned[disc]) return;
+    if(!cloned[disc][pkg]) cloned[disc][pkg] = {};
+    const existingRaw = cloned[disc][pkg][zone];
+    const anchorDate = (existingRaw && existingRaw[0]) ? existingRaw[0].start : "2026-01-01";
+    let cursor = anchorDate;
+    const segs = actOverrides[key].map(a=>{
+      const start = cursor;
+      const end = addWorkingDays(start, a.wd-1);
+      cursor = addWorkingDays(end,1);
+      return {label:a.label, code:a.code, start, end};
+    });
+    cloned[disc][pkg][zone] = segs;
+  });
+  return cloned;
+}
+
 function applyScheduleOverrides(raw, overrides){
   const cloned = JSON.parse(JSON.stringify(raw));
   Object.keys(overrides).forEach(key=>{
@@ -1673,10 +1835,81 @@ function applyScheduleOverrides(raw, overrides){
   return cloned;
 }
 
-let DATA = applyScheduleOverrides(RAW_DATA, loadScheduleOverrides());
+let DATA = applyScheduleOverrides(buildEffectiveRawData(), loadScheduleOverrides());
 function reloadSchedule(){
-  DATA = applyScheduleOverrides(RAW_DATA, loadScheduleOverrides());
+  DATA = applyScheduleOverrides(buildEffectiveRawData(), loadScheduleOverrides());
   rebuildFlatTasks();
+}
+
+/* ---------------------------------------------------------------------
+   ZONE & ACTIVITY EDITING — adding a new zone, adding a new activity to an
+   existing zone, and editing an activity's trade/label/duration.
+   Deliberately restricted to protect history: every task's identity is
+   "discipline__package__zone__index-in-zone", and so is every schedule-
+   override anchor. Inserting or deleting a MIDDLE activity would silently
+   shift every later activity onto a different id, disconnecting its
+   recorded PPC/status history. So: existing activities can be relabeled or
+   re-timed in place (same index, safe); new activities only ever get
+   appended at the end (nothing else shifts); only the last activity in a
+   zone can be removed (undoes an append cleanly).
+--------------------------------------------------------------------- */
+function isUserAddedZone(disc,pkg,zone){
+  return !(RAW_DATA[disc] && RAW_DATA[disc][pkg] && RAW_DATA[disc][pkg][zone]);
+}
+
+function currentZoneRecipe(disc,pkg,zone){
+  // the zone's current activity list as a plain {label,code,wd} recipe, whichever
+  // source it currently comes from (a saved activity override, or RAW_DATA itself)
+  const key = zoneOverrideKey(disc,pkg,zone);
+  const actOverrides = loadActivityOverrides();
+  if(actOverrides[key]) return actOverrides[key].map(a=>({...a}));
+  const raw = RAW_DATA[disc] && RAW_DATA[disc][pkg] && RAW_DATA[disc][pkg][zone];
+  if(!raw) return [];
+  return raw.map(seg=>({label:seg.label, code:seg.code, wd: dayDiff(seg.start,seg.end)+1}));
+}
+
+function saveZoneRecipe(disc,pkg,zone,recipe){
+  const key = zoneOverrideKey(disc,pkg,zone);
+  const actOverrides = loadActivityOverrides();
+  actOverrides[key] = recipe;
+  saveActivityOverrides(actOverrides);
+  reloadSchedule();
+  renderAll();
+  scheduleAutoExport();
+}
+
+function createZone(disc,pkg,zoneName,startDate,recipe){
+  const key = zoneOverrideKey(disc,pkg,zoneName);
+  const actOverrides = loadActivityOverrides();
+  actOverrides[key] = recipe;
+  saveActivityOverrides(actOverrides);
+  const schedOverrides = loadScheduleOverrides();
+  schedOverrides[key] = {0:{start:startDate}};
+  saveScheduleOverrides(schedOverrides);
+  reloadSchedule();
+  renderAll();
+  scheduleAutoExport();
+  showToast(`Saved — ${zoneName} added`);
+}
+
+function deleteUserZone(disc,pkg,zone){
+  const key = zoneOverrideKey(disc,pkg,zone);
+  const actOverrides = loadActivityOverrides();
+  delete actOverrides[key];
+  saveActivityOverrides(actOverrides);
+  const schedOverrides = loadScheduleOverrides();
+  delete schedOverrides[key];
+  saveScheduleOverrides(schedOverrides);
+  const ordKey = zoneOrderKey(disc,pkg);
+  const zoneOrderOverrides = loadZoneOrder();
+  if(zoneOrderOverrides[ordKey]){
+    zoneOrderOverrides[ordKey] = zoneOrderOverrides[ordKey].filter(z=>z!==zone);
+    saveZoneOrder(zoneOrderOverrides);
+  }
+  reloadSchedule();
+  renderAll();
+  scheduleAutoExport();
+  showToast(`Saved — ${zone} removed`);
 }
 
 /* ---------------------------------------------------------------------
@@ -1899,6 +2132,7 @@ function drawFlow(){
       <div class="fl-zone-info" title="Click to move this zone's start date">
         <span class="fz-name">${name}</span><span class="fz-sub">${segs.length} activities · ${durTxt}d</span>
       </div>
+      <button class="fl-edit-acts" title="Add or edit this zone's activities">✎</button>
     `;
     div.querySelector(".fl-zone-info").addEventListener("click",(e)=>{
       e.stopPropagation();
@@ -1912,8 +2146,20 @@ function drawFlow(){
       e.stopPropagation();
       moveZone(state.discipline, state.package, name, 1);
     });
+    div.querySelector(".fl-edit-acts").addEventListener("click",(e)=>{
+      e.stopPropagation();
+      openZoneEditorModal({mode:"edit", disc:state.discipline, pkg:state.package, zone:name});
+    });
     labelsWrap.appendChild(div);
   });
+  const addZoneRow = document.createElement("div");
+  addZoneRow.className = "fl-zone fl-add-zone-row";
+  addZoneRow.innerHTML = `<button class="fl-add-zone-btn">+ Add zone</button>`;
+  addZoneRow.querySelector(".fl-add-zone-btn").addEventListener("click",(e)=>{
+    e.stopPropagation();
+    openZoneEditorModal({mode:"create", disc:state.discipline, pkg:state.package});
+  });
+  labelsWrap.appendChild(addZoneRow);
 
   /* ---- SVG timeline ---- */
   const svgWrap = document.getElementById("flowSvgWrap");
@@ -2299,6 +2545,108 @@ function showToast(msg){
   el.classList.add("show");
   if(toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>{ el.classList.remove("show"); }, 2600);
+}
+
+/* ---------------------------------------------------------------------
+   ZONE EDITOR MODAL — add a new zone, or add/edit an existing zone's activities
+--------------------------------------------------------------------- */
+let zeState = null;
+
+function openZoneEditorModal({mode, disc, pkg, zone}){
+  const overlay = document.getElementById("zoneEditorOverlay");
+  const zoneFields = document.getElementById("zeZoneFields");
+  const title = document.getElementById("zeTitle");
+  const deleteBtn = document.getElementById("zeDeleteZone");
+  zeState = { mode, disc, pkg, zone, rows: mode==="edit" ? currentZoneRecipe(disc,pkg,zone) : [] };
+
+  if(mode==="create"){
+    title.textContent = "Add zone — "+pkg;
+    zoneFields.style.display = "";
+    document.getElementById("zeZoneName").value = "";
+    document.getElementById("zeStartDate").value = "";
+    deleteBtn.style.display = "none";
+    if(zeState.rows.length===0) zeState.rows.push({label:"", code:"", wd:1});
+  } else {
+    title.textContent = "Edit activities — "+zone;
+    zoneFields.style.display = "none";
+    deleteBtn.style.display = isUserAddedZone(disc,pkg,zone) ? "" : "none";
+  }
+  renderZeRows();
+  document.getElementById("zeHint").textContent = "";
+  overlay.style.display = "flex";
+}
+function closeZoneEditorModal(){
+  document.getElementById("zoneEditorOverlay").style.display = "none";
+  zeState = null;
+}
+function renderZeRows(){
+  const wrap = document.getElementById("zeRows");
+  wrap.innerHTML = "";
+  zeState.rows.forEach((row,idx)=>{
+    const div = document.createElement("div");
+    div.className = "ze-row";
+    const isLast = idx === zeState.rows.length-1;
+    div.innerHTML = `
+      <input type="text" class="ze-label" value="${escHtml(row.label)}" placeholder="e.g. Excavation">
+      <input type="text" class="ze-code" value="${escHtml(row.code)}" maxlength="4" placeholder="E">
+      <input type="number" class="ze-wd" value="${row.wd}" min="1" max="60">
+      <button class="ze-row-del" ${isLast?"":"disabled"} title="${isLast?"Remove this activity":"Only the last activity can be removed, to protect recorded history"}">✕</button>
+    `;
+    div.querySelector(".ze-label").addEventListener("input",(e)=>{ zeState.rows[idx].label = e.target.value; });
+    div.querySelector(".ze-code").addEventListener("input",(e)=>{ zeState.rows[idx].code = e.target.value; });
+    div.querySelector(".ze-wd").addEventListener("input",(e)=>{ zeState.rows[idx].wd = Math.max(1, parseInt(e.target.value,10)||1); });
+    if(isLast){
+      div.querySelector(".ze-row-del").addEventListener("click",()=>{
+        if(zeState.rows.length<=1){ document.getElementById("zeHint").textContent = "A zone needs at least one activity."; return; }
+        zeState.rows.pop();
+        renderZeRows();
+      });
+    }
+    wrap.appendChild(div);
+  });
+}
+function initZoneEditorControls(){
+  document.getElementById("zeAddRow").addEventListener("click",()=>{
+    zeState.rows.push({label:"", code:"", wd:1});
+    renderZeRows();
+  });
+  document.getElementById("zeClose").addEventListener("click", closeZoneEditorModal);
+  document.getElementById("zeCancel").addEventListener("click", closeZoneEditorModal);
+  document.getElementById("zoneEditorOverlay").addEventListener("click",(e)=>{
+    if(e.target.id==="zoneEditorOverlay") closeZoneEditorModal();
+  });
+  document.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape" && zeState) closeZoneEditorModal();
+  });
+  document.getElementById("zeSave").addEventListener("click",()=>{
+    const hint = document.getElementById("zeHint");
+    for(const row of zeState.rows){
+      if(!row.label.trim()){ hint.textContent = "Every activity needs a name."; return; }
+      if(!row.code.trim()){ hint.textContent = "Every activity needs a short code (1-4 letters)."; return; }
+      if(!row.wd || row.wd<1){ hint.textContent = "Duration must be at least 1 working day."; return; }
+    }
+    const cleanRows = zeState.rows.map(r=>({label:r.label.trim(), code:r.code.trim().toUpperCase(), wd:r.wd}));
+
+    if(zeState.mode==="create"){
+      const zoneName = document.getElementById("zeZoneName").value.trim();
+      const startDate = document.getElementById("zeStartDate").value;
+      if(!zoneName){ hint.textContent = "Give the zone a name."; return; }
+      if(DATA[zeState.disc][zeState.pkg] && DATA[zeState.disc][zeState.pkg][zoneName]){ hint.textContent = "A zone with that name already exists in this package."; return; }
+      if(!startDate){ hint.textContent = "Pick a start date."; return; }
+      createZone(zeState.disc, zeState.pkg, zoneName, startDate, cleanRows);
+    } else {
+      saveZoneRecipe(zeState.disc, zeState.pkg, zeState.zone, cleanRows);
+      showToast(`Saved — ${zeState.zone} activities updated`);
+    }
+    closeZoneEditorModal();
+  });
+  document.getElementById("zeDeleteZone").addEventListener("click",()=>{
+    if(confirm(`Delete ${zeState.zone}? This removes it and all its recorded PPC history. This cannot be undone.`)){
+      const d=zeState.disc, p=zeState.pkg, z=zeState.zone;
+      closeZoneEditorModal();
+      deleteUserZone(d, p, z);
+    }
+  });
 }
 
 function positionPopover(pop, evt){
@@ -3108,6 +3456,12 @@ function dailyKey(taskId,date){ return taskId+"@"+date; }
 const dlState = { date: TODAY };
 
 function tasksOnDay(date){
+  // Sunday is universally a non-working day in this program — but a multi-day
+  // activity's start/end range can still span across one (e.g. Sat-to-Mon), so a
+  // plain start<=date<=end check was incorrectly surfacing that activity AS IF it
+  // were scheduled that Sunday too, letting it be marked Done/Missed and dragging
+  // it into PPC stats for a day nothing was ever actually due.
+  if(isSunday(date)) return [];
   return FLAT_TASKS.filter(t=> t.start<=date && t.end>=date)
     .sort((a,b)=> a.zone<b.zone?-1:a.zone>b.zone?1:0);
 }
@@ -4011,10 +4365,11 @@ async function buildWorkbook(){
      on a different device or a cleared browser restores it perfectly, rather
      than relying on reconstructing it from the visible Zone Schedule sheet. ---- */
   const stateSh = wb.addWorksheet("App State", {state:"hidden"});
-  stateSh.getCell("A1").value = "Internal — do not edit. Restores exact zone resequencing (including individual activity edits) when this file is re-imported, even on a different device or a cleared browser.";
+  stateSh.getCell("A1").value = "Internal — do not edit. Restores exact zone resequencing (including individual activity edits and added zones/activities) when this file is re-imported, even on a different device or a cleared browser.";
   stateSh.getCell("A2").value = JSON.stringify({
     scheduleOverrides: loadScheduleOverrides(),
-    zoneOrder: loadZoneOrder()
+    zoneOrder: loadZoneOrder(),
+    activityOverrides: loadActivityOverrides()
   });
 
   return wb;
@@ -4272,6 +4627,7 @@ async function importExcel(file){
           const parsed = JSON.parse(raw);
           if(parsed.scheduleOverrides) saveScheduleOverrides(parsed.scheduleOverrides);
           if(parsed.zoneOrder) saveZoneOrder(parsed.zoneOrder);
+          if(parsed.activityOverrides) saveActivityOverrides(parsed.activityOverrides);
           stateRestored = true;
           reloadSchedule();
         }
@@ -4468,6 +4824,7 @@ initLookaheadControls();
 initDailyLogControls();
 initParetoTimelineControls();
 initTimelineControls();
+initZoneEditorControls();
 updateAutoExportUI();
 tryResumeLinkedFile();
 renderAll();
